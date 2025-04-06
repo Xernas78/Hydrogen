@@ -5,6 +5,9 @@ import dev.xernas.photon.Lib;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.opengl.mesh.GLMesh;
 import dev.xernas.photon.render.IMesh;
+import dev.xernas.photon.render.shader.Material;
+import dev.xernas.photon.utils.GlobalUtilitaries;
+import dev.xernas.photon.utils.Image;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -18,20 +21,20 @@ public class Mesh {
     private final int[] indices;
     private final Vector2f[] textureCoords;
     private final Vector3f[] normals;
-    private final Path texturePath;
+    private final Material material;
 
-    public Mesh(Vector3f[] vertices, int[] indices, Vector2f[] textureCoords, Vector3f[] normals, Path texturePath) {
+    public Mesh(Vector3f[] vertices, int[] indices, Vector2f[] textureCoords, Vector3f[] normals, Material material) {
         this.vertices = vertices;
         this.indices = indices;
         this.textureCoords = textureCoords;
         this.normals = normals;
-        this.texturePath = texturePath;
+        this.material = material;
     }
 
     public IMesh toIMesh() throws PhotonException {
         Lib lib = Hydrogen.getLibrary();
         return switch (lib) {
-            case OPENGL -> new GLMesh(floatVectorsToFloatArray(vertices), indices, floatVectorsToFloatArray(normals), floatVectorsToFloatArray(textureCoords), texturePath);
+            case OPENGL -> new GLMesh(floatVectorsToFloatArray(vertices), indices, floatVectorsToFloatArray(normals), floatVectorsToFloatArray(textureCoords), material);
             default -> throw new PhotonException("Unsupported library: " + lib);
         };
     }
@@ -83,7 +86,7 @@ public class Mesh {
         public int[] indices = null;
         public Vector2f[] textureCoords = null;
         public Vector3f[] normals = null;
-        public Path texturePath = null;
+        public Material material = null;
 
         public Builder vertices(Vector3f... vertices) {
             this.vertices = vertices;
@@ -110,13 +113,13 @@ public class Mesh {
             return this;
         }
 
-        public Builder texturePath(Path texturePath) {
-            this.texturePath = texturePath;
+        public Builder material(Material material) {
+            this.material = material;
             return this;
         }
 
         public IMesh build() throws PhotonException {
-            return new Mesh(vertices, indices, textureCoords, normals, texturePath).toIMesh();
+            return new Mesh(vertices, indices, textureCoords, normals, material).toIMesh();
         }
     }
 

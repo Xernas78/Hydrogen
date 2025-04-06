@@ -7,6 +7,7 @@ import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.IShader;
+import dev.xernas.photon.render.shader.Material;
 import dev.xernas.photon.window.IWindow;
 
 public class MeshRenderer implements Behavior {
@@ -43,6 +44,7 @@ public class MeshRenderer implements Behavior {
         shader.setUniform("textureSampler", 0);
         shader.setUniform("useTexture", mesh.hasTexture());
         shader.setUniform("useLighting", mesh.hasNormals());
+        shader.setUniform("baseColor", mesh.getMaterial().getBaseColor());
     }
 
     public IMesh getMesh() {
