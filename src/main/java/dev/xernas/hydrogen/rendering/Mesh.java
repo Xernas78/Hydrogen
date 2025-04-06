@@ -6,14 +6,10 @@ import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.opengl.mesh.GLMesh;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.Material;
-import dev.xernas.photon.utils.GlobalUtilitaries;
-import dev.xernas.photon.utils.Image;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import java.nio.file.Path;
 
 public class Mesh {
 
