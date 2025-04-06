@@ -12,6 +12,7 @@ import dev.xernas.photon.render.shader.IShader;
 import dev.xernas.photon.window.IWindow;
 import org.lwjgl.opengl.GLUtil;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,6 +24,8 @@ import java.util.List;
 public abstract class Hydrogen {
 
     private static Lib library;
+
+    public static final Color DEFAULT_HYDROGEN_COLOR = Color.decode("#D30115");
 
     private static final long SECOND = 1000000000L;
     private static final long MILLISECOND = 1000000L;

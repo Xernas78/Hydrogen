@@ -28,7 +28,7 @@ public class Mesh {
         this.indices = indices;
         this.textureCoords = textureCoords;
         this.normals = normals;
-        this.material = material;
+        this.material = material != null ? material : new DefaultMaterial();
     }
 
     public IMesh toIMesh() throws PhotonException {

@@ -10,6 +10,8 @@ import dev.xernas.photon.render.shader.IShader;
 import dev.xernas.photon.render.shader.Material;
 import dev.xernas.photon.window.IWindow;
 
+import java.awt.*;
+
 public class MeshRenderer implements Behavior {
 
     private IMesh mesh;
@@ -44,7 +46,7 @@ public class MeshRenderer implements Behavior {
         shader.setUniform("textureSampler", 0);
         shader.setUniform("useTexture", mesh.hasTexture());
         shader.setUniform("useLighting", mesh.hasNormals());
-        shader.setUniform("baseColor", mesh.getMaterial().getBaseColor());
+        shader.setUniform("baseColor", mesh.getMaterial().getBaseColor() != null ? mesh.getMaterial().getBaseColor() : Hydrogen.DEFAULT_HYDROGEN_COLOR);
     }
 
     public IMesh getMesh() {
