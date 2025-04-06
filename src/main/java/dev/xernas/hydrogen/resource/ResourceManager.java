@@ -48,7 +48,7 @@ public class ResourceManager {
      * @param origin the class from which we want to use this manager
      */
     public ResourceManager(Class<?> origin) {
-            this(origin, "", "", "");
+            this(origin, "shaders", "models", "textures");
         }
 
     public InputStream getResourceAsStream(String resourcePath) throws PhotonException {
