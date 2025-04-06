@@ -80,6 +80,7 @@ public abstract class Hydrogen {
         // Init lib
         Photon.initPhoton();
 
+        ResourceManager remoteResourceManager = getNewResourceManager();
         // All setups
         window = getNewWindow();
         renderer = new Renderer(lib);
@@ -90,7 +91,6 @@ public abstract class Hydrogen {
             throw new PhotonException("Window is null");
         }
 
-        ResourceManager remoteResourceManager = getNewResourceManager();
         Collection<ResourceManager.ShaderResource> localShaderResources = ResourceManager.HYDROGEN_RESOURCES.getAllShaderResources();
         Collection<ResourceManager.ShaderResource> remoteShaderResources = remoteResourceManager.getAllShaderResources();
         Collection<IShader> shaders = ResourceManager.fuseCollections(
@@ -121,7 +121,7 @@ public abstract class Hydrogen {
 
         float FIXED_FRAMETIME = 1.0f / timeStep;
 
-        window.show();
+        window.show(window.getHints().isMaximized());
 
         while (running) {
             boolean render = false;
