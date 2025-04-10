@@ -16,5 +16,13 @@ uniform vec3 baseColor;
 void main() {
     vec4 currentColor = vec4(baseColor, 1.0);
     if (useTexture) currentColor = texture(textureSampler, texCoord);
+    vec3 lighting = vec3(0.0);
+    vec3 normalisedNormal = normalize(normal);
+    for (int i = 0; i < 10; i++) {
+        vec3 lightDir = normalize(toLightDir[i].xyz);
+        float diffuse = max(dot(normalisedNormal, lightDir), 0.0);
+        lighting += diffuse;
+    }
+    vec3 totalLighting = max(lighting, 0.2);
     fragColor = vec4(currentColor.xyz * totalLighting, 1.0);
 }
