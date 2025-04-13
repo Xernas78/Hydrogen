@@ -7,13 +7,12 @@ uniform mat4 transformMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
-uniform vec3 lightPos[10];
-
 out vec3 pos;
 out vec3 normal;
 out vec2 texCoord;
 
-out vec3 toLightDir[10];
+out vec3 fragmentWorldPos;
+
 out vec3 toCameraDir;
 
 void main() {
@@ -29,13 +28,10 @@ void main() {
 
     // Pass through vertex attributes
     pos = vertexPos;
-    normal = vertexNormal;
+    normal = mat3(transpose(inverse(transformMatrix))) * vertexNormal;
     texCoord = vertexTexCoord;
 
-    // Calculate the direction to the light source(s)
-    for (int i = 0; i < 10; i++) {
-        toLightDir[i] = lightPos[i] - worldPos.xyz;
-    }
+   fragmentWorldPos = worldPos.xyz;
 
     // Calculate the direction to the camera
     toCameraDir = cameraWorldPos.xyz - worldPos.xyz;

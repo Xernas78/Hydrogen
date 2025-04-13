@@ -21,8 +21,8 @@ public class Light implements Behavior {
 
     @Override
     public void preInit(Renderer renderer, SceneEntity parent) throws PhotonException {
-        Set<String> shaders = renderer.getShaders().keySet();
-        for (String shader : shaders) renderer.loadSceneEntity(shader, parent);
+        Collection<IShader> shaders = renderer.getShaders().values();
+        for (IShader shader : shaders) if (shader.hasLightingSystem()) renderer.loadSceneEntity(shader, parent);
     }
 
     @Override
@@ -42,7 +42,6 @@ public class Light implements Behavior {
             throw new PhotonException("Maximum number of lights exceeded (" + lightIndex + " > " + MAX_LIGHTS + ")");
         }
         shader.setUniform("lightPos[" + lightIndex + "]", transform.getPosition());
-        shader.setUniform("ambiantLight", 0.15f);
         lightIndex++;
     }
 }

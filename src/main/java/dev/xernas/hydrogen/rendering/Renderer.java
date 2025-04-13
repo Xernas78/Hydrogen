@@ -43,6 +43,7 @@ public class Renderer implements Initializable {
             shader.setUniform("viewMatrix", MatrixUtils.createViewMatrix((Transform.CameraTransform) Hydrogen.getActiveCamera().getTransform()));
             shader.setUniform("projectionMatrix", MatrixUtils.createProjectionMatrix(hydrogen.getActiveWindow()));
             shader.setUniform("orthoMatrix", MatrixUtils.createOrthoMatrix(hydrogen.getActiveWindow()));
+            shader.setUniform("ambiantLight", 0.15f);
             for (int i = 0; i < entry.getValue().size(); i++) {
                 renderEntity(shader, entry.getValue().get(i), i == 0); // True only for first one so once per shader
             }
@@ -112,14 +113,13 @@ public class Renderer implements Initializable {
         shader.init();
     }
 
-    public void loadSceneEntity(String shaderString, SceneEntity sceneEntity) throws PhotonException {
-        if (shaderString == null) {
+    public void loadSceneEntity(IShader shader, SceneEntity sceneEntity) throws PhotonException {
+        if (shader == null) {
             MeshRenderer meshRenderer = sceneEntity.getBehavior(MeshRenderer.class);
             if (meshRenderer == null) return;
-            shaderString = meshRenderer.getShader();
+            shader = shaderRegistry.get(meshRenderer.getShader());
         }
-        IShader shader = shaderRegistry.get(shaderString);
-        if (shader == null && !(sceneEntity instanceof Camera)) throw new PhotonException("Could not find shader " + shaderString);
+        if (shader == null && !(sceneEntity instanceof Camera)) throw new PhotonException("Could not find shader");
         List<SceneEntity> currentEntities = entities.get(shader);
         if (currentEntities == null) currentEntities = new ArrayList<>();
         currentEntities.add(sceneEntity);
