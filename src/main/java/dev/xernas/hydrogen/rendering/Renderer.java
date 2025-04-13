@@ -85,6 +85,10 @@ public class Renderer implements Initializable {
         }
     }
 
+    public Map<String, IShader> getShaders() {
+        return shaderRegistry;
+    }
+
     public void loadShaders(Collection<IShader> shaders) {
         List<String> loadedShaders = new ArrayList<>();
         for (IShader shader : shaders) {
@@ -108,15 +112,22 @@ public class Renderer implements Initializable {
         shader.init();
     }
 
-    public void loadSceneEntity(SceneEntity sceneEntity) throws PhotonException {
-        MeshRenderer meshRenderer = sceneEntity.getBehavior(MeshRenderer.class);
-        if (meshRenderer == null) return;
-        IShader shader = shaderRegistry.get(meshRenderer.getShader());
-        if (shader == null && !(sceneEntity instanceof Camera)) throw new PhotonException("Could not find shader " + meshRenderer.getShader());
+    public void loadSceneEntity(String shaderString, SceneEntity sceneEntity) throws PhotonException {
+        if (shaderString == null) {
+            MeshRenderer meshRenderer = sceneEntity.getBehavior(MeshRenderer.class);
+            if (meshRenderer == null) return;
+            shaderString = meshRenderer.getShader();
+        }
+        IShader shader = shaderRegistry.get(shaderString);
+        if (shader == null && !(sceneEntity instanceof Camera)) throw new PhotonException("Could not find shader " + shaderString);
         List<SceneEntity> currentEntities = entities.get(shader);
         if (currentEntities == null) currentEntities = new ArrayList<>();
         currentEntities.add(sceneEntity);
         entities.put(shader, currentEntities);
+    }
+
+    public void loadSceneEntity(SceneEntity sceneEntity) throws PhotonException {
+        loadSceneEntity(null, sceneEntity);
     }
 
     public void initSceneEntities(boolean sameMesh, SceneEntity... sceneEntities) throws PhotonException {

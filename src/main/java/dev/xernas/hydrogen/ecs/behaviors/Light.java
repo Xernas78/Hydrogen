@@ -4,8 +4,12 @@ import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.hydrogen.ecs.Transform;
+import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.IShader;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class Light implements Behavior {
 
@@ -16,8 +20,15 @@ public class Light implements Behavior {
     private Transform transform;
 
     @Override
+    public void preInit(Renderer renderer, SceneEntity parent) throws PhotonException {
+        Set<String> shaders = renderer.getShaders().keySet();
+        for (String shader : shaders) renderer.loadSceneEntity(shader, parent);
+    }
+
+    @Override
     public void init(Hydrogen hydrogen, SceneEntity parent) throws PhotonException {
         transform = parent.getTransform();
+
     }
 
     @Override
