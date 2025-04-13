@@ -18,4 +18,9 @@ public class DefaultMaterial implements Material {
         return Hydrogen.DEFAULT_HYDROGEN_COLOR;
     }
 
+    @Override
+    public boolean isIlluminated() {
+        return false;
+    }
+
 }

@@ -42,6 +42,7 @@ public class Light implements Behavior {
             throw new PhotonException("Maximum number of lights exceeded (" + lightIndex + " > " + MAX_LIGHTS + ")");
         }
         shader.setUniform("lightPos[" + lightIndex + "]", transform.getPosition());
+        shader.setUniform("ambiantLight", 0.15f);
         lightIndex++;
     }
 }

@@ -11,7 +11,9 @@ in vec3 toCameraDir;
 
 uniform sampler2D textureSampler;
 uniform bool useTexture;
+uniform float ambiantLight;
 uniform vec3 baseColor;
+uniform bool isIlluminated;
 
 void main() {
     vec4 currentColor = vec4(baseColor, 1.0);
@@ -23,6 +25,11 @@ void main() {
         float diffuse = max(dot(normalisedNormal, lightDir), 0.0);
         lighting += diffuse;
     }
-    vec3 totalLighting = max(lighting, 0.2);
-    fragColor = vec4(currentColor.xyz * totalLighting, 1.0);
+    vec3 totalLighting = max(lighting, ambiantLight);
+    if (isIlluminated) {
+        fragColor = vec4(currentColor.xyz * totalLighting, 1.0);
+    }
+    else {
+        fragColor = vec4(currentColor.xyz, 1.0);
+    }
 }

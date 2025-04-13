@@ -24,6 +24,11 @@ public class ColorMaterial implements Material {
         return color;
     }
 
+    @Override
+    public boolean isIlluminated() {
+        return true;
+    }
+
     public void setColor(Color color) {
         this.color = color;
     }

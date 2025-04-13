@@ -37,4 +37,9 @@ public class TextureMaterial implements Material {
         return null;
     }
 
+    @Override
+    public boolean isIlluminated() {
+        return true;
+    }
+
 }

@@ -47,6 +47,7 @@ public class MeshRenderer implements Behavior {
         shader.setUniform("useTexture", mesh.hasTexture());
         shader.setUniform("useLighting", mesh.hasNormals());
         shader.setUniform("baseColor", mesh.getMaterial().getBaseColor() != null ? mesh.getMaterial().getBaseColor() : Hydrogen.DEFAULT_HYDROGEN_COLOR);
+        shader.setUniform("isIlluminated", mesh.getMaterial().isIlluminated());
     }
 
     public IMesh getMesh() {
