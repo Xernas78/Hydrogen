@@ -49,8 +49,8 @@ public class SceneEntity {
         transform.apply(shader);
     }
 
-    public void renderBehaviors(IShader shader, boolean oncePerShader) throws PhotonException {
-        for (Behavior behavior : behaviors.values()) behavior.render(shader, oncePerShader);
+    public void renderBehaviors(IShader shader, boolean oncePerEntity) throws PhotonException {
+        for (Behavior behavior : behaviors.values()) behavior.render(shader, oncePerEntity);
     }
 
     public String getName() {

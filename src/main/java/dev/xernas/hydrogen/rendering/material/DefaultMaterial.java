@@ -1,4 +1,4 @@
-package dev.xernas.hydrogen.rendering;
+package dev.xernas.hydrogen.rendering.material;
 
 import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.photon.render.shader.Material;

@@ -7,6 +7,8 @@ uniform mat4 transformMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+uniform vec3 lightPos[10];
+
 out vec3 pos;
 out vec3 normal;
 out vec2 texCoord;
@@ -32,7 +34,7 @@ void main() {
 
     // Calculate the direction to the light source(s)
     for (int i = 0; i < 10; i++) {
-        toLightDir[i] = vec3(0, 30, 0) - worldPos.xyz;
+        toLightDir[i] = lightPos[i] - worldPos.xyz;
     }
 
     // Calculate the direction to the camera

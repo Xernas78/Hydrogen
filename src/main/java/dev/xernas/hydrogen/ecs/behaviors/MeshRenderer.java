@@ -41,7 +41,7 @@ public class MeshRenderer implements Behavior {
     }
 
     @Override
-    public void render(IShader shader, boolean oncePerShader) throws PhotonException {
+    public void render(IShader shader, boolean oncePerEntity) throws PhotonException {
         if (mesh == null) return;
         shader.setUniform("textureSampler", 0);
         shader.setUniform("useTexture", mesh.hasTexture());

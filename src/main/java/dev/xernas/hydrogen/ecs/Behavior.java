@@ -24,7 +24,7 @@ public interface Behavior {
 
     }
 
-    default void render(IShader shader, boolean oncePerShader) throws PhotonException {
+    default void render(IShader shader, boolean oncePerEntity) throws PhotonException {
 
     }
 

@@ -3,6 +3,7 @@ package dev.xernas.hydrogen.rendering;
 import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.hydrogen.ecs.Transform;
+import dev.xernas.hydrogen.ecs.behaviors.Light;
 import dev.xernas.hydrogen.ecs.behaviors.MeshRenderer;
 import dev.xernas.hydrogen.ecs.entities.Camera;
 import dev.xernas.hydrogen.ecs.utils.MatrixUtils;
@@ -33,6 +34,7 @@ public class Renderer implements Initializable {
             GLRenderer.clear(color);
             GLRenderer.enableDepthTest();
         }
+        Light.lightIndex = 0;
         for (Map.Entry<IShader, List<SceneEntity>> entry : entities.entrySet()) {
             IShader shader = entry.getKey();
             if (shader == null) return;
@@ -49,9 +51,9 @@ public class Renderer implements Initializable {
         if (lib == Lib.OPENGL) GLRenderer.disableDepthTest();
     }
 
-    private void renderEntity(IShader currentShader, SceneEntity sceneEntity, boolean oncePerShader) throws PhotonException {
+    private void renderEntity(IShader currentShader, SceneEntity sceneEntity, boolean oncePerEntity) throws PhotonException {
         sceneEntity.applyTransform(currentShader);
-        sceneEntity.renderBehaviors(currentShader, oncePerShader);
+        sceneEntity.renderBehaviors(currentShader, oncePerEntity);
         IMesh mesh = sceneEntity.getMesh();
         if (mesh == null) return;
         mesh.use();

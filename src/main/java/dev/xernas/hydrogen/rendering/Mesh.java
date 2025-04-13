@@ -1,6 +1,7 @@
 package dev.xernas.hydrogen.rendering;
 
 import dev.xernas.hydrogen.Hydrogen;
+import dev.xernas.hydrogen.rendering.material.DefaultMaterial;
 import dev.xernas.photon.Lib;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.opengl.mesh.GLMesh;
@@ -35,7 +36,7 @@ public class Mesh {
         };
     }
 
-    private static float[] floatVectorsToFloatArray(Vector3f... vectors) {
+    public static float[] floatVectorsToFloatArray(Vector3f... vectors) {
         if (vectors == null) return null;
         float[] floatArray = new float[vectors.length * 3];
         for (int i = 0; i < vectors.length; i++) {
@@ -46,7 +47,16 @@ public class Mesh {
         return floatArray;
     }
 
-    private static float[] floatVectorsToFloatArray(Vector2f... vectors) {
+    public static Vector3f[] floatArrayToFloat3Vectors(float[] array) {
+        if (array == null) return null;
+        Vector3f[] vectors = new Vector3f[array.length / 3];
+        for (int i = 0; i < vectors.length; i++) {
+            vectors[i] = new Vector3f(array[i * 3], array[i * 3 + 1], array[i * 3 + 2]);
+        }
+        return vectors;
+    }
+
+    public static float[] floatVectorsToFloatArray(Vector2f... vectors) {
         if (vectors == null) return null;
         float[] floatArray = new float[vectors.length * 2];
         for (int i = 0; i < vectors.length; i++) {
@@ -56,7 +66,16 @@ public class Mesh {
         return floatArray;
     }
 
-    private static int[] integersVectorsToIntegerArray(Vector3i... integers) {
+    public static Vector2f[] floatArrayToFloat2Vectors(float[] array) {
+        if (array == null) return null;
+        Vector2f[] vectors = new Vector2f[array.length / 2];
+        for (int i = 0; i < vectors.length; i++) {
+            vectors[i] = new Vector2f(array[i * 2], array[i * 2 + 1]);
+        }
+        return vectors;
+    }
+
+    public static int[] integersVectorsToIntegerArray(Vector3i... integers) {
         if (integers == null) return null;
         int[] integerArray = new int[integers.length * 3];
         for (int i = 0; i < integers.length; i++) {
@@ -67,7 +86,16 @@ public class Mesh {
         return integerArray;
     }
 
-    private static int[] integersVectorsToIntegerArray(Vector2i... integers) {
+    public static Vector3i[] integerArrayToInteger3Vectors(int[] array) {
+        if (array == null) return null;
+        Vector3i[] vectors = new Vector3i[array.length / 3];
+        for (int i = 0; i < vectors.length; i++) {
+            vectors[i] = new Vector3i(array[i * 3], array[i * 3 + 1], array[i * 3 + 2]);
+        }
+        return vectors;
+    }
+
+    public static int[] integersVectorsToIntegerArray(Vector2i... integers) {
         if (integers == null) return null;
         int[] integerArray = new int[integers.length * 2];
         for (int i = 0; i < integers.length; i++) {
@@ -75,6 +103,15 @@ public class Mesh {
             integerArray[i * 2 + 1] = integers[i].y;
         }
         return integerArray;
+    }
+
+    public static Vector2i[] integerArrayToInteger2Vectors(int[] array) {
+        if (array == null) return null;
+        Vector2i[] vectors = new Vector2i[array.length / 2];
+        for (int i = 0; i < vectors.length; i++) {
+            vectors[i] = new Vector2i(array[i * 2], array[i * 2 + 1]);
+        }
+        return vectors;
     }
 
     public static class Builder {
