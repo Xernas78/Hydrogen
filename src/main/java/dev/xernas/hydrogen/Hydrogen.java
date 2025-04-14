@@ -75,7 +75,7 @@ public abstract class Hydrogen {
      * @param lib the library used with Hydrogen (Lib.OPENGL, ..)
      * @throws PhotonException if no lib was found
      */
-    public void launch(Lib lib, float timeStep, boolean debug) throws PhotonException {
+    public void launch(Lib lib, int monitorIndex, float timeStep, boolean debug) throws PhotonException {
         library = lib;
         // Init lib
         Photon.initPhoton();
@@ -121,7 +121,7 @@ public abstract class Hydrogen {
 
         float FIXED_FRAMETIME = 1.0f / timeStep;
 
-        window.show(window.getHints().isMaximized());
+        window.show(monitorIndex, window.getHints().isMaximized());
 
         while (running) {
             boolean render = false;
