@@ -40,8 +40,12 @@ public class Renderer implements Initializable {
             if (shader == null) return;
             if (entry.getValue().isEmpty()) continue;
             shader.use();
-            shader.setUniform("viewMatrix", MatrixUtils.createViewMatrix((Transform.CameraTransform) Hydrogen.getActiveCamera().getTransform()));
-            shader.setUniform("projectionMatrix", MatrixUtils.createProjectionMatrix(hydrogen.getActiveWindow()));
+            Transform.CameraTransform cameraTransform = (Transform.CameraTransform) Hydrogen.getActiveCamera().getTransform();
+            shader.setUniform("u_viewProjectionMatrix",
+                    MatrixUtils.createProjectionMatrix(hydrogen.getActiveWindow()).
+                            mul(MatrixUtils.createViewMatrix(cameraTransform))
+            );
+            shader.setUniform("u_cameraWorldPos", cameraTransform.getPosition());
             shader.setUniform("orthoMatrix", MatrixUtils.createOrthoMatrix(hydrogen.getActiveWindow()));
             shader.setUniform("ambiantLight", 0.15f);
             for (int i = 0; i < entry.getValue().size(); i++) {

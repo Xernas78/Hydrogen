@@ -2,12 +2,7 @@
 
 out vec4 fragColor;
 
-in vec3 pos;
-in vec2 texCoord;
-in vec3 normal;
-
-in vec3 toLightDir[10];
-in vec3 toCameraDir;
+in vec3 vs_out_normal;
 
 uniform sampler2D textureSampler;
 uniform bool useTexture;
@@ -16,5 +11,5 @@ uniform vec3 baseColor;
 uniform bool isIlluminated;
 
 void main() {
-    fragColor = vec4(normal, 1.0);
+    fragColor = vec4(vs_out_normal, 1.0);
 }

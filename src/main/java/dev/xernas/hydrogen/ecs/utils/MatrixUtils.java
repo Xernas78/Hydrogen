@@ -6,6 +6,7 @@ import dev.xernas.hydrogen.ecs.Transform;
 import dev.xernas.hydrogen.ecs.entities.Camera;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.window.IWindow;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -21,28 +22,37 @@ public class MatrixUtils {
         return matrix4f;
     }
 
-        public static Matrix4f createViewMatrix(Transform.CameraTransform transform) {
-            Vector3f position = transform.getPosition();
-            Vector3f rotation = transform.getRotation();
-            Matrix4f viewMatrix = new Matrix4f();
-            viewMatrix.identity();
-            viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
-                    .rotate((float) Math.toRadians(rotation.y), Direction.UP)
-                    .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
-            viewMatrix.translate(-position.x, -position.y, -position.z);
-            return viewMatrix;
-        }
+    public static Matrix4f createViewMatrix(Transform.CameraTransform transform) {
+        Vector3f position = transform.getPosition();
+        Vector3f rotation = transform.getRotation();
+        Matrix4f viewMatrix = new Matrix4f();
+        viewMatrix.identity();
+        viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
+                .rotate((float) Math.toRadians(rotation.y), Direction.UP)
+                .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
+        viewMatrix.translate(-position.x, -position.y, -position.z);
+        return viewMatrix;
+    }
 
-        public static Matrix4f createProjectionMatrix(IWindow window) throws PhotonException {
-            Camera camera = Hydrogen.getActiveCamera();
-            return new Matrix4f().identity()
-                    .setPerspective(
-                            (float) Math.toRadians(camera.getFov()),
-                            (float) window.getWidth() / window.getHeight(),
-                            camera.getzNear(),
-                            camera.getzFar()
-                    );
-        }
+    public static Matrix4f createProjectionMatrix(IWindow window) throws PhotonException {
+        Camera camera = Hydrogen.getActiveCamera();
+        return new Matrix4f().identity()
+                .setPerspective(
+                        (float) Math.toRadians(camera.getFov()),
+                        (float) window.getWidth() / window.getHeight(),
+                        camera.getzNear(),
+                        camera.getzFar()
+                );
+    }
+
+    public static Matrix3f createNormalMatrix(Matrix4f modelMatrix) throws PhotonException {
+        Matrix3f normalMatrix = new Matrix3f();
+        normalMatrix.identity();
+        modelMatrix.get3x3(normalMatrix);
+        normalMatrix.invert();
+        normalMatrix.transpose();
+        return normalMatrix;
+    }
 
     public static Matrix4f createOrthoMatrix(IWindow window) throws PhotonException {
         float aspectRatio = (float) window.getWidth() / window.getHeight();

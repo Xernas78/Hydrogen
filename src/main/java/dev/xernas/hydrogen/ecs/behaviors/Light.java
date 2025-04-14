@@ -44,7 +44,7 @@ public class Light implements Behavior {
             throw new PhotonException("Maximum number of lights exceeded (" + lightIndex + " > " + MAX_LIGHTS + ")");
         }
         shader.setUniform("lightPos[" + lightIndex + "]", transform.getPosition());
-        shader.setUniform("lightIntensity[" + lightIndex + "]", active ? new Vector3f(transform.getScale()).div(10) : 0);
+        shader.setUniform("lightIntensity[" + lightIndex + "]", active ? transform.getScale() : 0);
         lightIndex++;
     }
 

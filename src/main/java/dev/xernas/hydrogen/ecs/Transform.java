@@ -3,6 +3,7 @@ package dev.xernas.hydrogen.ecs;
 import dev.xernas.hydrogen.ecs.utils.MatrixUtils;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.IShader;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Transform {
@@ -46,7 +47,9 @@ public class Transform {
     }
 
     public void apply(IShader shader) throws PhotonException {
-        shader.setUniform("transformMatrix", MatrixUtils.createTransformationMatrix(this));
+        Matrix4f modelMatrix = MatrixUtils.createTransformationMatrix(this);
+        shader.setUniform("u_modelMatrix", modelMatrix);
+        shader.setUniform("u_normalMatrix", MatrixUtils.createNormalMatrix(modelMatrix));
     }
 
     public void move(Vector3f position) {
