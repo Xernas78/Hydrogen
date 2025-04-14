@@ -7,6 +7,7 @@ import dev.xernas.hydrogen.ecs.Transform;
 import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.IShader;
+import org.joml.Vector3f;
 
 import java.util.Collection;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class Light implements Behavior {
             throw new PhotonException("Maximum number of lights exceeded (" + lightIndex + " > " + MAX_LIGHTS + ")");
         }
         shader.setUniform("lightPos[" + lightIndex + "]", transform.getPosition());
-        shader.setUniform("lightIntensity[" + lightIndex + "]", active ? transform.getScale() : 0);
+        shader.setUniform("lightIntensity[" + lightIndex + "]", active ? new Vector3f(transform.getScale()).div(10) : 0);
         lightIndex++;
     }
 
