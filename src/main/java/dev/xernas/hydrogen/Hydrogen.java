@@ -148,7 +148,7 @@ public abstract class Hydrogen {
                 render = true;
                 unprocessedTime -= FRAMETIME;
                 if (window.shouldClose()) {
-                    stop();
+                    running = false;
                     return;
                 }
                 Scenes.updateCurrentScene();
@@ -174,7 +174,7 @@ public abstract class Hydrogen {
     }
 
     public void stop() {
-        running = false;
+        window.setShouldClose(true);
     }
 
     public static boolean isRunning() {
