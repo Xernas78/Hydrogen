@@ -1,11 +1,15 @@
 package dev.xernas.hydrogen.ecs.utils;
 
 import dev.xernas.hydrogen.rendering.Mesh;
+import dev.xernas.hydrogen.resource.OBJLoader;
+import dev.xernas.hydrogen.resource.ResourceManager;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.IMesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
+import java.nio.file.Path;
 
 public class Shapes {
 
@@ -138,6 +142,10 @@ public class Shapes {
         meshBuilder.triangles(Mesh.integerArrayToInteger3Vectors(indices));
 
         return meshBuilder;
+    }
+
+    public static Mesh.Builder obj(Path path) throws PhotonException {
+        return OBJLoader.loadFromResources(path);
     }
 
 }

@@ -63,6 +63,10 @@ public class ResourceManager {
         return getResourcePath(texturesFolder + SEPARATOR + texturePath);
     }
 
+    public Path getModel(String modelPath) throws PhotonException {
+        return getResourcePath(modelsFolder + SEPARATOR + modelPath);
+    }
+
     public Path getResourcePath(String path) throws PhotonException {
         URL resource = origin.getClassLoader().getResource(path);
         if (resource == null) {
@@ -83,6 +87,14 @@ public class ResourceManager {
             return Paths.get(resourceUri);
         } catch (URISyntaxException | IOException e) {
             throw new PhotonException("Error getting resource path: " + path);
+        }
+    }
+
+    public static List<String> getFileLines(Path path) throws PhotonException {
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            return reader.lines().toList();
+        } catch (IOException e) {
+            throw new PhotonException("Error reading file lines: " + path);
         }
     }
 
@@ -121,17 +133,6 @@ public class ResourceManager {
             return getResourcePath(resourcePath).toAbsolutePath();
         } catch (PhotonException e) {
             return null;
-        }
-    }
-
-    public List<String> getLinesFromResource(String resourcePath) {
-        try (InputStream is = origin.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (is == null) return null;
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-                return br.lines().toList();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading lines from resource: " + resourcePath);
         }
     }
 
