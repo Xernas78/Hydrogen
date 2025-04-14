@@ -11,6 +11,7 @@ in vec3 fragmentWorldPos;
 in vec3 toCameraDir;
 
 uniform vec3 lightPos[10];
+uniform vec3 lightIntensity[10];
 
 uniform sampler2D textureSampler;
 uniform bool useTexture;
@@ -26,7 +27,7 @@ void main() {
     for (int i = 0; i < 10; i++) {
         vec3 lightDir = normalize(lightPos[i] - fragmentWorldPos);
         float diffuse = max(dot(normalisedNormal, lightDir), 0.0);
-        lighting += diffuse;
+        lighting += diffuse * lightIntensity[i];
     }
     if (isIlluminated) {
         fragColor = vec4(currentColor.xyz * min(lighting, 1.0), 1.0);

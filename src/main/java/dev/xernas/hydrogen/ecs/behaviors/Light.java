@@ -18,6 +18,7 @@ public class Light implements Behavior {
     public static int lightIndex = 0;
 
     private Transform transform;
+    private boolean active = false;
 
     @Override
     public void preInit(Renderer renderer, SceneEntity parent) throws PhotonException {
@@ -28,7 +29,7 @@ public class Light implements Behavior {
     @Override
     public void init(Hydrogen hydrogen, SceneEntity parent) throws PhotonException {
         transform = parent.getTransform();
-
+        turnOn();
     }
 
     @Override
@@ -42,6 +43,15 @@ public class Light implements Behavior {
             throw new PhotonException("Maximum number of lights exceeded (" + lightIndex + " > " + MAX_LIGHTS + ")");
         }
         shader.setUniform("lightPos[" + lightIndex + "]", transform.getPosition());
+        shader.setUniform("lightIntensity[" + lightIndex + "]", active ? transform.getScale() : 0);
         lightIndex++;
+    }
+
+    public void turnOn() {
+        active = true;
+    }
+
+    public void turnOff() {
+        active = false;
     }
 }
