@@ -71,31 +71,41 @@ public class Transform {
     }
 
     public Transform scale(Vector3f scale) {
-        this.scale = scale;
+        this.scale.mul(scale);
         return this;
     }
 
     public Transform scale(float x, float y, float z) {
-        this.scale = new Vector3f(x, y, z);
+        this.scale.mul(x, y, z);
         return this;
     }
 
     public Transform scale(float scale) {
+        this.scale.mul(scale);
+        return this;
+    }
+
+    public Transform setScale(float x, float y, float z) {
+        this.scale = new Vector3f(x, y, z);
+        return this;
+    }
+
+    public Transform setScale(float scale) {
         this.scale = new Vector3f(scale, scale, scale);
         return this;
     }
 
-    public Transform scaleX(float x) {
+    public Transform setScaleX(float x) {
         this.scale.x = x;
         return this;
     }
 
-    public Transform scaleY(float y) {
+    public Transform setScaleY(float y) {
         this.scale.y = y;
         return this;
     }
 
-    public Transform scaleZ(float z) {
+    public Transform setScaleZ(float z) {
         this.scale.z = z;
         return this;
     }
