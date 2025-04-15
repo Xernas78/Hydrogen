@@ -25,6 +25,13 @@ public class SceneEntity {
         }
     }
 
+    public void addBehaviors(Behavior... behaviors) {
+        for (Behavior behavior : behaviors) {
+            if (behavior == null) continue;
+            this.behaviors.put(behavior.getClass(), behavior);
+        }
+    }
+
     public void preInitBehaviors(Renderer renderer) throws PhotonException {
         for (Behavior behavior : behaviors.values()) behavior.preInit(renderer, this);
     }

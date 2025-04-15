@@ -8,6 +8,8 @@ import org.joml.Vector3f;
 
 public class Transform {
 
+    public final static float MINIMUM_SCALE = 0.1f;
+
     private final Vector3f defaultPos;
     private final Vector3f defaultRot;
     private Vector3f position;
@@ -142,6 +144,8 @@ public class Transform {
 
     public static class CameraTransform extends Transform {
 
+        private boolean isOrtho = false;
+
         public CameraTransform() {
             super();
         }
@@ -156,15 +160,22 @@ public class Transform {
 
         @Override
         public void move(Vector3f offset) {
+            Vector3f pos = getPosition();
+            if (isOrtho) pos.z = Math.max(pos.z, Transform.MINIMUM_SCALE - 1);
+            Vector3f rot = isOrtho ? new Vector3f() : getRotation();
             if (offset.z != 0) {
-                getPosition().x += (float) Math.sin(Math.toRadians(getRotation().y)) * -1.0f * offset.z;
-                getPosition().z += (float) Math.cos(Math.toRadians(getRotation().y)) * offset.z;
+                pos.x += (float) Math.sin(Math.toRadians(rot.y)) * -1.0f * offset.z;
+                pos.z += (float) Math.cos(Math.toRadians(rot.y)) * offset.z;
             }
             if (offset.x != 0) {
-                getPosition().x += (float) Math.sin(Math.toRadians(getRotation().y - 90)) * -1.0f * offset.x;
-                getPosition().z += (float) Math.cos(Math.toRadians(getRotation().y - 90)) * offset.x;
+                pos.x += (float) Math.sin(Math.toRadians(rot.y - 90)) * -1.0f * offset.x;
+                pos.z += (float) Math.cos(Math.toRadians(rot.y - 90)) * offset.x;
             }
-            getPosition().y += offset.y;
+            pos.y += offset.y;
+        }
+
+        public void setOrtho(boolean ortho) {
+            isOrtho = ortho;
         }
     }
 

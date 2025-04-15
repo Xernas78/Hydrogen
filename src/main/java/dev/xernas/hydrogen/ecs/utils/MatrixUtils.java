@@ -22,15 +22,21 @@ public class MatrixUtils {
         return matrix4f;
     }
 
-    public static Matrix4f createViewMatrix(Transform.CameraTransform transform) {
+    public static Matrix4f createViewMatrix(Transform.CameraTransform transform, boolean isOrtho) {
         Vector3f position = transform.getPosition();
-        Vector3f rotation = transform.getRotation();
         Matrix4f viewMatrix = new Matrix4f();
         viewMatrix.identity();
-        viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
-                .rotate((float) Math.toRadians(rotation.y), Direction.UP)
-                .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
-        viewMatrix.translate(-position.x, -position.y, -position.z);
+        transform.setOrtho(isOrtho);
+        if (!isOrtho) {
+            Vector3f rotation = transform.getRotation();
+            viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
+                    .rotate((float) Math.toRadians(rotation.y), Direction.UP)
+                    .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
+        }
+        viewMatrix.translate(-position.x, -position.y, isOrtho ? 0 : -position.z);
+        if (isOrtho) {
+            viewMatrix.scale(Math.max(position.z + 1, Transform.MINIMUM_SCALE));
+        }
         return viewMatrix;
     }
 

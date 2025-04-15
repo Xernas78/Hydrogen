@@ -43,10 +43,13 @@ public class Renderer implements Initializable {
             Transform.CameraTransform cameraTransform = (Transform.CameraTransform) Hydrogen.getActiveCamera().getTransform();
             shader.setUniform("u_viewProjectionMatrix",
                     MatrixUtils.createProjectionMatrix(hydrogen.getActiveWindow()).
-                            mul(MatrixUtils.createViewMatrix(cameraTransform))
+                            mul(MatrixUtils.createViewMatrix(cameraTransform, false))
+            );
+            shader.setUniform("u_viewOrthoMatrix",
+                    MatrixUtils.createOrthoMatrix(hydrogen.getActiveWindow())
+                            .mul(MatrixUtils.createViewMatrix(cameraTransform, true))
             );
             shader.setUniform("u_cameraWorldPos", cameraTransform.getPosition());
-            shader.setUniform("u_orthoMatrix", MatrixUtils.createOrthoMatrix(hydrogen.getActiveWindow()));
             shader.setUniform("ambiantLight", 0.15f);
             for (int i = 0; i < entry.getValue().size(); i++) {
                 renderEntity(shader, entry.getValue().get(i), i == 0); // True only for first one so once per shader
