@@ -11,5 +11,5 @@ uniform vec3 baseColor;
 uniform bool isIlluminated;
 
 void main() {
-    fragColor = vec4(vs_out_normal, 1.0);
+    fragColor = vec4(vs_out_normal * 0.5 + 0.5, 1.0);
 }

@@ -1,6 +1,7 @@
 package dev.xernas.hydrogen.ecs;
 
 import dev.xernas.hydrogen.Hydrogen;
+import dev.xernas.hydrogen.ecs.behaviors.utils.BehaviorUtils;
 import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.hydrogen.ecs.behaviors.MeshRenderer;
 import dev.xernas.photon.exceptions.PhotonException;
@@ -87,6 +88,13 @@ public class SceneEntity {
     public <T extends Behavior> T getBehavior(Class<T> type) {
         Behavior behavior = behaviors.get(type);
         return (T) behavior;
+    }
+
+    public <T extends Behavior> T requireBehavior(Class<T> type) throws PhotonException {
+        return BehaviorUtils.requireNonNullBehavior(
+                getBehavior(type),
+                name + " (SceneEntity) does not have the required behavior of type " + type.getSimpleName()
+        );
     }
 
     public List<Behavior> getBehaviors() {

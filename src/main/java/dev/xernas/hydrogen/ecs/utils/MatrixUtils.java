@@ -22,21 +22,15 @@ public class MatrixUtils {
         return matrix4f;
     }
 
-    public static Matrix4f createViewMatrix(Transform.CameraTransform transform, boolean isOrtho) {
+    public static Matrix4f createViewMatrix(Transform.CameraTransform transform) {
         Vector3f position = transform.getPosition();
         Matrix4f viewMatrix = new Matrix4f();
         viewMatrix.identity();
-        transform.setOrtho(isOrtho);
-        if (!isOrtho) {
-            Vector3f rotation = transform.getRotation();
-            viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
-                    .rotate((float) Math.toRadians(rotation.y), Direction.UP)
-                    .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
-        }
-        viewMatrix.translate(-position.x, -position.y, isOrtho ? 0 : -position.z);
-        if (isOrtho) {
-            viewMatrix.scale(Math.max(position.z + 1, Transform.MINIMUM_SCALE));
-        }
+        Vector3f rotation = transform.getRotation();
+        viewMatrix.rotate((float) Math.toRadians(rotation.x), Direction.RIGHT)
+                .rotate((float) Math.toRadians(rotation.y), Direction.UP)
+                .rotate((float) Math.toRadians(rotation.z), Direction.FORWARD);
+        viewMatrix.translate(-position.x, -position.y, -position.z);
         return viewMatrix;
     }
 
@@ -52,12 +46,7 @@ public class MatrixUtils {
     }
 
     public static Matrix3f createNormalMatrix(Matrix4f modelMatrix) throws PhotonException {
-        Matrix3f normalMatrix = new Matrix3f();
-        normalMatrix.identity();
-        modelMatrix.get3x3(normalMatrix);
-        normalMatrix.invert();
-        normalMatrix.transpose();
-        return normalMatrix;
+        return new Matrix3f(modelMatrix).invert().transpose();
     }
 
     public static Matrix4f createOrthoMatrix(IWindow window) throws PhotonException {

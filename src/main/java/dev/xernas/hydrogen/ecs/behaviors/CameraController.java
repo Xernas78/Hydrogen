@@ -20,23 +20,12 @@ public class CameraController implements Behavior {
     private static Vector3f rotation = new Vector3f();
 
     private final float speed;
-    private final boolean isOrtho;
 
     public CameraController() {
-        this(false);
-    }
-
-    public CameraController(boolean isOrtho) {
-        this.isOrtho = isOrtho;
         this.speed = 0.01f;
     }
 
     public CameraController(float speed) {
-        this(false, speed);
-    }
-
-    public CameraController(boolean isOrtho, float speed) {
-        this.isOrtho = isOrtho;
         this.speed = speed * 0.01f;
     }
 
@@ -63,10 +52,10 @@ public class CameraController implements Behavior {
         direction = new Vector3f();
         rotation = new Vector3f();
         if (input.keyPress(Key.KEY_Z)) {
-            direction.add(new Vector3f(0, isOrtho ? speed : 0, isOrtho ? 0 : -speed));
+            direction.add(new Vector3f(0, 0, -speed));
         }
         if (input.keyPress(Key.KEY_S)) {
-            direction.add(new Vector3f(0, isOrtho ? -speed : 0, isOrtho ? 0 : speed));
+            direction.add(new Vector3f(0, 0, speed));
         }
         if (input.keyPress(Key.KEY_Q)) {
             direction.add(new Vector3f(-speed, 0, 0));
@@ -75,10 +64,10 @@ public class CameraController implements Behavior {
             direction.add(new Vector3f(speed, 0, 0));
         }
         if (input.keyPress(Key.KEY_SPACE)) {
-            direction.add(new Vector3f(0, isOrtho ? 0 : speed, isOrtho ? speed : 0));
+            direction.add(new Vector3f(0, speed, 0));
         }
         if (input.keyPress(Key.KEY_LEFT_SHIFT)) {
-            direction.add(new Vector3f(0, isOrtho ? 0 : -speed, isOrtho ? -speed : 0));
+            direction.add(new Vector3f(0, -speed, 0));
         }
         if (input.keyPress(Key.KEY_ARROW_UP)) {
             rotation.add(new Vector3f(-0.1f, 0, 0));

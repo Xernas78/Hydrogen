@@ -144,8 +144,6 @@ public class Transform {
 
     public static class CameraTransform extends Transform {
 
-        private boolean isOrtho = false;
-
         public CameraTransform() {
             super();
         }
@@ -161,8 +159,7 @@ public class Transform {
         @Override
         public void move(Vector3f offset) {
             Vector3f pos = getPosition();
-            if (isOrtho) pos.z = Math.max(pos.z, Transform.MINIMUM_SCALE - 1);
-            Vector3f rot = isOrtho ? new Vector3f() : getRotation();
+            Vector3f rot = getRotation();
             if (offset.z != 0) {
                 pos.x += (float) Math.sin(Math.toRadians(rot.y)) * -1.0f * offset.z;
                 pos.z += (float) Math.cos(Math.toRadians(rot.y)) * offset.z;
@@ -172,10 +169,6 @@ public class Transform {
                 pos.z += (float) Math.cos(Math.toRadians(rot.y - 90)) * offset.x;
             }
             pos.y += offset.y;
-        }
-
-        public void setOrtho(boolean ortho) {
-            isOrtho = ortho;
         }
     }
 
