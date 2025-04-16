@@ -5,20 +5,31 @@ import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.hydrogen.ecs.Transform;
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.input.Input;
 import dev.xernas.photon.window.IWindow;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
+
+import java.util.function.IntSupplier;
 
 public class UIComponent implements Behavior {
 
-    private int x, y, width, height;
+    private final IntSupplier xSupplier, ySupplier, widthSupplier, heightSupplier;
     private IWindow window;
     private Transform parentTransform;
 
     public UIComponent(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this.xSupplier = () -> x;
+        this.ySupplier = () -> y;
+        this.widthSupplier = () -> width;
+        this.heightSupplier = () -> height;
+    }
+
+    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier) {
+        this.xSupplier = xSupplier;
+        this.ySupplier = ySupplier;
+        this.widthSupplier = widthSupplier;
+        this.heightSupplier = heightSupplier;
     }
 
     @Override
@@ -28,42 +39,80 @@ public class UIComponent implements Behavior {
         }
         this.parentTransform = parent.getTransform();
         this.window = hydrogen.getActiveWindow();
-        parentTransform.setPosition(pixelPosToWorldPos(x, y, width, height));
-        parentTransform.setScale(pixelScaleToWorldScale(width, height));
+        parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
+        parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
     }
 
     @Override
     public void update() throws PhotonException {
-        int windowWidth = window.getWidth();
-        int windowHeight = window.getHeight();
-
-        float aspectRatio;
-
-        if (windowWidth >= windowHeight) {
-            // Horizontal screen
-            aspectRatio = (float) windowWidth / windowHeight;
-
-            float ndcX = (parentTransform.getPosition().x + aspectRatio) / (2.0f * aspectRatio); // → [0, 1]
-            float ndcY = (1.0f - parentTransform.getPosition().y) / 2.0f;                        // → [0, 1]
-
-            x = Math.round(ndcX * windowWidth) - width / 2;
-            y = Math.round(ndcY * windowHeight) - height / 2;
-            width = Math.round((parentTransform.getScale().x / (2.0f * aspectRatio)) * windowWidth);
-            height = Math.round((parentTransform.getScale().y / 2.0f) * windowHeight);
-        } else {
-            // Vertical screen
-            aspectRatio = (float) windowHeight / windowWidth;
-
-            float ndcX = (parentTransform.getPosition().x + 1.0f) / 2.0f;
-            float ndcY = (aspectRatio - parentTransform.getPosition().y) / (2.0f * aspectRatio);
-
-            x = Math.round(ndcX * windowWidth) - width / 2;
-            y = Math.round(ndcY * windowHeight) - height / 2;
-            width = Math.round((parentTransform.getScale().x / 2.0f) * windowWidth);
-            height = Math.round((parentTransform.getScale().y / (2.0f * aspectRatio)) * windowHeight);
-        }
+        pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight());
+        pixelScaleToWorldScale(getWidth(), getHeight());
     }
 
+    @Override
+    public void input(Input input) {
+        input.setOnResize(window -> {
+            parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
+            parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
+        });
+    }
+
+//    private Vector2i worldPosToPixelPos(Vector3f worldPos, Vector3f scale) {
+//        int windowWidth = window.getWidth();
+//        int windowHeight = window.getHeight();
+//
+//        float aspectRatio;
+//        int pixelX, pixelY;
+//        int pixelWidth, pixelHeight;
+//
+//        if (windowWidth >= windowHeight) {
+//            // Horizontal screen
+//            aspectRatio = (float) windowWidth / windowHeight;
+//
+//            float ndcX = (worldPos.x + aspectRatio) / (2.0f * aspectRatio); // → [0, 1]
+//            float ndcY = (1.0f - worldPos.y) / 2.0f;                        // → [0, 1]
+//
+//            pixelWidth = Math.round((scale.x / (2.0f * aspectRatio)) * windowWidth);
+//            pixelHeight = Math.round((scale.y / 2.0f) * windowHeight);
+//            pixelX = Math.round(ndcX * windowWidth) - pixelWidth / 2;
+//            pixelY = Math.round(ndcY * windowHeight) - pixelHeight / 2;
+//        } else {
+//            // Vertical screen
+//            aspectRatio = (float) windowHeight / windowWidth;
+//
+//            float ndcX = (worldPos.x + 1.0f) / 2.0f;
+//            float ndcY = (worldPos.y) / (2.0f * aspectRatio);
+//
+//            pixelWidth = Math.round((scale.x / 2.0f) * windowWidth);
+//            pixelHeight = Math.round((scale.y / (2.0f * aspectRatio)) * windowHeight);
+//            pixelX = Math.round(ndcX * windowWidth) - pixelWidth / 2;
+//            pixelY = Math.round(ndcY * windowHeight) - pixelHeight / 2;
+//        }
+//
+//        return new Vector2i(pixelX, pixelY);
+//    }
+//
+//    private Vector2i worldScaleToPixelScale(Vector3f worldScale) {
+//        int windowWidth = window.getWidth();
+//        int windowHeight = window.getHeight();
+//
+//        float aspectRatio;
+//        int pixelWidth, pixelHeight;
+//
+//        if (windowWidth >= windowHeight) {
+//            // Horizontal screen
+//            aspectRatio = (float) windowWidth / windowHeight;
+//            pixelWidth = Math.round((worldScale.x / (2.0f * aspectRatio)) * windowWidth);
+//            pixelHeight = Math.round((worldScale.y / 2.0f) * windowHeight);
+//        } else {
+//            // Vertical screen
+//            aspectRatio = (float) windowHeight / windowWidth;
+//            pixelWidth = Math.round((worldScale.x / 2.0f) * windowWidth);
+//            pixelHeight = Math.round((worldScale.y / (2.0f * aspectRatio)) * windowHeight);
+//        }
+//
+//        return new Vector2i(pixelWidth, pixelHeight);
+//    }
 
     private Vector3f pixelPosToWorldPos(int x, int y, int width, int height) {
         int windowWidth = window.getWidth();
@@ -123,38 +172,18 @@ public class UIComponent implements Behavior {
     }
 
     public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-        pixelScaleToWorldScale(width, height);
+        return widthSupplier.getAsInt();
     }
 
     public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-        pixelScaleToWorldScale(width, height);
+        return heightSupplier.getAsInt();
     }
 
     public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-        pixelPosToWorldPos(x, y, width, height);
+        return xSupplier.getAsInt();
     }
 
     public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-        pixelPosToWorldPos(x, y, width, height);
+        return ySupplier.getAsInt();
     }
 }

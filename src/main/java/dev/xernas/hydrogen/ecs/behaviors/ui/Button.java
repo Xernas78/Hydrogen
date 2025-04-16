@@ -4,6 +4,7 @@ import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.input.Action;
 import dev.xernas.photon.input.Input;
 import dev.xernas.photon.input.Key;
 import dev.xernas.photon.input.MousePosition;
@@ -58,11 +59,21 @@ public class Button implements Behavior {
     public void input(Input input) {
         if (isMouseOver(input.getMousePosition())) {
             hovered = true;
-            if (input.mouseRelease(Key.MOUSE_LEFT)) if (onClick != null) onClick.accept(new ButtonEvent(parent, Key.MOUSE_LEFT));
-            if (input.mouseRelease(Key.MOUSE_RIGHT)) if (onClick != null) onClick.accept(new ButtonEvent(parent, Key.MOUSE_RIGHT));
-            if (input.mouseRelease(Key.MOUSE_MIDDLE)) if (onClick != null) onClick.accept(new ButtonEvent(parent, Key.MOUSE_MIDDLE));
-            if (input.mouseRelease(Key.MOUSE_BUTTON_4)) if (onClick != null) onClick.accept(new ButtonEvent(parent, Key.MOUSE_BUTTON_4));
-            if (input.mouseRelease(Key.MOUSE_BUTTON_5)) if (onClick != null) onClick.accept(new ButtonEvent(parent, Key.MOUSE_BUTTON_5));
+            if (input.isReleasing(Key.MOUSE_LEFT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_LEFT, Action.RELEASE));
+            if (input.isReleasing(Key.MOUSE_RIGHT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_RIGHT, Action.RELEASE));
+            if (input.isReleasing(Key.MOUSE_MIDDLE)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_MIDDLE, Action.RELEASE));
+            if (input.isReleasing(Key.MOUSE_BUTTON_4)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_4, Action.RELEASE));
+            if (input.isReleasing(Key.MOUSE_BUTTON_5)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_5, Action.RELEASE));
+            if (input.mousePress(Key.MOUSE_LEFT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_LEFT, Action.HOLD));
+            if (input.mousePress(Key.MOUSE_RIGHT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_RIGHT, Action.HOLD));
+            if (input.mousePress(Key.MOUSE_MIDDLE)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_MIDDLE, Action.HOLD));
+            if (input.mousePress(Key.MOUSE_BUTTON_4)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_4, Action.HOLD));
+            if (input.mousePress(Key.MOUSE_BUTTON_5)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_5, Action.HOLD));
+            if (input.isPressing(Key.MOUSE_LEFT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_LEFT, Action.PRESS));
+            if (input.isPressing(Key.MOUSE_RIGHT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_RIGHT, Action.PRESS));
+            if (input.isPressing(Key.MOUSE_MIDDLE)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_MIDDLE, Action.PRESS));
+            if (input.isPressing(Key.MOUSE_BUTTON_4)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_4, Action.PRESS));
+            if (input.isPressing(Key.MOUSE_BUTTON_5)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_BUTTON_5, Action.PRESS));
         } else {
             hovered = false;
         }
@@ -88,7 +99,7 @@ public class Button implements Behavior {
         return hovered;
     }
 
-    public record ButtonEvent(SceneEntityUI buttonParent, Key mouseButton) {
+    public record ButtonEvent(Input input, SceneEntityUI buttonParent, Key mouseButton, Action action) {
 
     }
 }
