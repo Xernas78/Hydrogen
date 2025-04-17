@@ -1,5 +1,6 @@
 # Hydrogen
 Hydrogen is a Java-based game engine developed from scratch, currently in its early stages. The goal is to create a modular, extensible, and performant engine suitable for 2D and 3D game and software development.
+It is using my own graphics library which wraps around opengl named [Photon](https://github.com/Xernas78/Photon)
 
 ## 🚧 Project Status
 This project is a work in progress. Contributions, feedback, and suggestions are welcome!
