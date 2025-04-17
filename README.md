@@ -5,11 +5,18 @@ Hydrogen is a Java-based game engine developed from scratch, currently in its ea
 This project is a work in progress. Contributions, feedback, and suggestions are welcome!
 
 ## ✨ Features
-- **Core Engine**: Built entirely in Java, providing a solid foundation for game development.
+- **Core Engine**: Built entirely in Java, providing a solid foundation for game and software development.
 - **Modular Architecture**: Designed to be extensible, allowing for easy integration of new features and systems.
 - **Rendering System**: Implementation of a rendering pipeline for 2D and 3D graphics.
+- **Lighting System**: Full lighting system !
 - **Input Handling**: Basic input management for keyboard and mouse events.
 - **Scene Management**: Support for multiple scenes
+- **Customization**: Lots of control and possibilities on every aspect of the app
+
+## 📃TODO
+- Some small fixes
+- Adding text rendering (Currently working on it)
+- Physics
 
 ## 🛠️ Getting Started
 ### Prerequisites
