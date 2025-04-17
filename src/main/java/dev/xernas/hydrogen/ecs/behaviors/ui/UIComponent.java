@@ -45,8 +45,8 @@ public class UIComponent implements Behavior {
 
     @Override
     public void update() throws PhotonException {
-        pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight());
-        pixelScaleToWorldScale(getWidth(), getHeight());
+        parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
+        parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
     }
 
     @Override
