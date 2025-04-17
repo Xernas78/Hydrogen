@@ -8,7 +8,7 @@ This project is a work in progress. Contributions, feedback, and suggestions are
 - **Core Engine**: Built entirely in Java, providing a solid foundation for game and software development.
 - **Modular Architecture**: Designed to be extensible, allowing for easy integration of new features and systems.
 - **Rendering System**: Implementation of a rendering pipeline for 2D and 3D graphics.
-- **Lighting System**: Full lighting system !
+- **Lighting System**: Basic lighting system + some builtin shaders
 - **Input Handling**: Basic input management for keyboard and mouse events.
 - **Scene Management**: Support for multiple scenes
 - **Customization**: Lots of control and possibilities on every aspect of the app
