@@ -40,28 +40,12 @@ public abstract class Hydrogen {
     private Renderer renderer;
     private IWindow window;
 
-    /**
-     * Gets the application name for OS purposes
-     * @return the application name as a String
-     */
     public abstract String getApplicationName();
 
-    /**
-     * Gets the application version to keep track of it
-     * @return the application version as a string
-     */
     public abstract String getApplicationVersion();
 
-    /**
-     * Gets the window of the application, can be any implementation of IWindow, it just has to work according to the correct library
-     * @return the window
-     */
     public abstract IWindow getNewWindow();
 
-    /**
-     * Gets the resource manager, used for getting resources in remote project
-     * @return the remote resource manager
-     */
     public abstract ResourceManager getNewResourceManager();
 
     public abstract List<Scene> getScenes() throws PhotonException;
@@ -70,11 +54,6 @@ public abstract class Hydrogen {
 
     }
 
-    /**
-     * Main method, launches the engine to make everything work
-     * @param lib the library used with Hydrogen (Lib.OPENGL, ..)
-     * @throws PhotonException if no lib was found
-     */
     public void launch(Lib lib, int monitorIndex, float timeStep, boolean debug) throws PhotonException {
         library = lib;
         // Init lib
