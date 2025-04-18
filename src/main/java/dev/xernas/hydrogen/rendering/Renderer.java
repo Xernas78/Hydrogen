@@ -14,6 +14,7 @@ import dev.xernas.photon.opengl.GLRenderer;
 import dev.xernas.photon.opengl.mesh.GLMesh;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.IShader;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.awt.*;
@@ -49,6 +50,7 @@ public class Renderer implements Initializable {
             shader.setUniform("u_orthoMatrix", MatrixUtils.createOrthoMatrix(hydrogen.getActiveWindow()));
             shader.setUniform("u_cameraWorldPos", cameraTransform.getPosition());
             shader.setUniform("u_aspectRatios", new Vector3f(hydrogen.getActiveWindow().getAspectRatios(), hydrogen.getActiveWindow().isHorizontal() ? 1 : -1));
+            shader.setUniform("u_windowSize", new Vector2i(hydrogen.getActiveWindow().getWidth(), hydrogen.getActiveWindow().getHeight()));
             shader.setUniform("ambiantLight", 0.15f);
             for (int i = 0; i < entry.getValue().size(); i++) {
                 renderEntity(shader, entry.getValue().get(i), i == 0); // True only for first one so once per shader
