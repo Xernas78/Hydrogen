@@ -1,8 +1,8 @@
 package dev.xernas.hydrogen.rendering.material;
 
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.render.ITexture;
 import dev.xernas.photon.render.shader.Material;
-import dev.xernas.photon.utils.PhotonImage;
 
 import java.awt.*;
 
@@ -15,7 +15,7 @@ public class ColorMaterial implements Material {
     }
 
     @Override
-    public PhotonImage getTexture() throws PhotonException {
+    public ITexture getTexture() throws PhotonException {
         return null;
     }
 

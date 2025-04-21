@@ -163,11 +163,12 @@ public class ResourceManager {
         JSONObject root = new JSONObject(tokener);
         String shaderName = root.getString("name");
         boolean hasLightingSystem = root.getBoolean("hasLight");
+        boolean hasPostProcessing = root.optBoolean("postProcessing", false);
         JSONObject vertex = root.getJSONObject("vertex");
         JSONObject fragment = root.getJSONObject("fragment");
         ShaderResource.TypeShaderResource vertexShaderResource = new ShaderResource.TypeShaderResource(vertex.getBoolean("fromHydrogen"), vertex.getString("path"));
         ShaderResource.TypeShaderResource fragmentShaderResource = new ShaderResource.TypeShaderResource(fragment.getBoolean("fromHydrogen"), fragment.getString("path"));
-        return new ShaderResource(shaderName, hasLightingSystem, vertexShaderResource, fragmentShaderResource);
+        return new ShaderResource(shaderName, hasLightingSystem, hasPostProcessing, vertexShaderResource, fragmentShaderResource);
     }
 
     public List<ShaderResource> getAllShaderResources() throws PhotonException {
@@ -207,7 +208,7 @@ public class ResourceManager {
                 }
                 String fragmentCode = readShaderCodeFromPath(fragmentFinalPath);
 
-                return new GLShader(shaderResource.name, shaderResource.hasLightingSystem, vertexCode, fragmentCode);
+                return new GLShader(shaderResource.name, shaderResource.hasLightingSystem, shaderResource.postProcessing, vertexCode, fragmentCode);
             }
             default -> {
                  throw new PhotonException("Unsupported library: " + lib);
@@ -254,7 +255,7 @@ public class ResourceManager {
     }
 
 
-    public record ShaderResource(String name, boolean hasLightingSystem, TypeShaderResource vertex,
+    public record ShaderResource(String name, boolean hasLightingSystem, boolean postProcessing, TypeShaderResource vertex,
                                  TypeShaderResource fragment) {
 
         public record TypeShaderResource(boolean fromHydrogen, String path) {

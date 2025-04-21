@@ -1,15 +1,15 @@
 package dev.xernas.hydrogen.rendering.material;
 
 import dev.xernas.hydrogen.Hydrogen;
+import dev.xernas.photon.render.ITexture;
 import dev.xernas.photon.render.shader.Material;
-import dev.xernas.photon.utils.PhotonImage;
 
 import java.awt.*;
 
 public class DefaultMaterial implements Material {
 
     @Override
-    public PhotonImage getTexture() {
+    public ITexture getTexture() {
         return null;
     }
 
