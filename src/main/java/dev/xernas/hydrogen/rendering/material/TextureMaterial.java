@@ -1,19 +1,20 @@
 package dev.xernas.hydrogen.rendering.material;
 
+import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.render.ITexture;
 import dev.xernas.photon.render.shader.Material;
 import dev.xernas.photon.utils.GlobalUtilitaries;
-import dev.xernas.photon.utils.PhotonImage;
 
 import java.awt.*;
 import java.nio.file.Path;
 
 public class TextureMaterial implements Material {
 
-    private PhotonImage texture;
+    private ITexture texture;
     private Path texturePath;
 
-    public TextureMaterial(PhotonImage texture) {
+    public TextureMaterial(ITexture texture) {
         this.texture = texture;
     }
 
@@ -22,14 +23,14 @@ public class TextureMaterial implements Material {
     }
 
     @Override
-    public PhotonImage getTexture() throws PhotonException {
+    public ITexture getTexture() throws PhotonException {
         if (texture == null && texturePath != null) {
-            texture = GlobalUtilitaries.loadImage(texturePath);
+            switch (Hydrogen.getLibrary()) {
+                case OPENGL -> texture = GlobalUtilitaries.loadGLImage(texturePath);
+                default -> throw new PhotonException("Unsupported library: " + Hydrogen.getLibrary());
+            }
         }
-        if (texture != null) {
-            return texture;
-        }
-        return null;
+        return texture;
     }
 
     @Override

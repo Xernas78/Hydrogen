@@ -1,35 +1,32 @@
 package dev.xernas.hydrogen.rendering.material;
 
+import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.ITexture;
 import dev.xernas.photon.render.shader.Material;
 
 import java.awt.*;
 
-public class ColorMaterial implements Material {
+public class ScreenTextureMaterial implements Material {
 
-    private Color color;
+    private final Renderer renderer;
 
-    public ColorMaterial(Color color) {
-        this.color = color;
+    public ScreenTextureMaterial(Renderer renderer) {
+        this.renderer = renderer;
     }
 
     @Override
     public ITexture getTexture() throws PhotonException {
-        return null;
+        return renderer.getScreenTexture();
     }
 
     @Override
     public Color getBaseColor() {
-        return color;
+        return Color.WHITE;
     }
 
     @Override
     public boolean isIlluminated() {
-        return true;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
+        return false;
     }
 }

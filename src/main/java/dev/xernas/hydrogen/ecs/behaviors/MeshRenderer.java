@@ -5,6 +5,7 @@ import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.opengl.GLRenderer;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.IShader;
 import dev.xernas.photon.render.shader.Material;

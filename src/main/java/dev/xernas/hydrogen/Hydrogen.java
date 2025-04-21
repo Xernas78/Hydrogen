@@ -8,6 +8,7 @@ import dev.xernas.hydrogen.resource.ResourceManager;
 import dev.xernas.photon.Lib;
 import dev.xernas.photon.Photon;
 import dev.xernas.photon.exceptions.PhotonException;
+import dev.xernas.photon.render.ITexture;
 import dev.xernas.photon.render.shader.IShader;
 import dev.xernas.photon.window.IWindow;
 import org.lwjgl.opengl.GLUtil;
@@ -62,7 +63,7 @@ public abstract class Hydrogen {
         ResourceManager remoteResourceManager = getNewResourceManager();
         // All setups
         window = getNewWindow();
-        renderer = new Renderer(lib);
+        renderer = new Renderer(lib, this);
 
         // Check setups
         if (window == null) {
