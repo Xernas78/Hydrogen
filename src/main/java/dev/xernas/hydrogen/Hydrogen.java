@@ -62,7 +62,7 @@ public abstract class Hydrogen {
         ResourceManager remoteResourceManager = getNewResourceManager();
         // All setups
         window = getNewWindow();
-        renderer = new Renderer(lib);
+        renderer = new Renderer(lib, this);
 
         // Check setups
         if (window == null) {
@@ -140,7 +140,7 @@ public abstract class Hydrogen {
             }
 
             if (render) {
-                renderer.render(this, window.getBackgroundColor());
+                renderer.render(window.getBackgroundColor());
                 frames++;
             }
         }
