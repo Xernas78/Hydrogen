@@ -17,12 +17,22 @@ public class UIComponent implements Behavior {
     private final IntSupplier xSupplier, ySupplier, widthSupplier, heightSupplier;
     private IWindow window;
     private Transform parentTransform;
+    private float zFloat;
 
     public UIComponent(int x, int y, int width, int height) {
         this.xSupplier = () -> x;
         this.ySupplier = () -> y;
         this.widthSupplier = () -> width;
         this.heightSupplier = () -> height;
+        this.zFloat = 0.0f;
+    }
+
+    public UIComponent(int x, int y, int width, int height, float z) {
+        this.xSupplier = () -> x;
+        this.ySupplier = () -> y;
+        this.widthSupplier = () -> width;
+        this.heightSupplier = () -> height;
+        this.zFloat = z;
     }
 
     public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier) {
@@ -30,6 +40,15 @@ public class UIComponent implements Behavior {
         this.ySupplier = ySupplier;
         this.widthSupplier = widthSupplier;
         this.heightSupplier = heightSupplier;
+        this.zFloat = 0.0f;
+    }
+
+    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, float z) {
+        this.xSupplier = xSupplier;
+        this.ySupplier = ySupplier;
+        this.widthSupplier = widthSupplier;
+        this.heightSupplier = heightSupplier;
+        this.zFloat = z;
     }
 
     @Override
@@ -185,5 +204,13 @@ public class UIComponent implements Behavior {
 
     public int getY() {
         return ySupplier.getAsInt();
+    }
+
+    public void setZ(float zFloat) {
+        this.zFloat = zFloat;
+    }
+
+    public float getZ() {
+        return zFloat;
     }
 }

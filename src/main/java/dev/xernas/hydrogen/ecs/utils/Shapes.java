@@ -53,7 +53,7 @@ public class Shapes {
         return meshBuilder;
     }
 
-    public static Mesh.Builder quad() throws PhotonException {
+    public static Mesh.Builder quad() {
         Mesh.Builder meshBuilder = new Mesh.Builder();
         meshBuilder.vertices(
             new Vector3f(-0.5f, 0.5f, 0.0f),

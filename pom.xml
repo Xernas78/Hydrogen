@@ -43,6 +43,11 @@
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
+        <dependency>
+            <groupId>dev.xernas</groupId>
+            <artifactId>Microscope</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>

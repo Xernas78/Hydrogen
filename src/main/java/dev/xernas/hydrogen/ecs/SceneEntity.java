@@ -16,6 +16,7 @@ public class SceneEntity {
     private final String name;
     private final Transform transform;
     private final Map<Class<? extends Behavior>, Behavior> behaviors = new HashMap<>();
+    private final List<SceneEntity> children = new ArrayList<>();
 
     public SceneEntity(String name, Transform transform, Behavior... behaviors) {
         this.name = name;
@@ -33,32 +34,46 @@ public class SceneEntity {
         }
     }
 
+    public void addChildren(SceneEntity... children) {
+        for (SceneEntity child : children) {
+            if (child == null) continue;
+            this.children.add(child);
+        }
+    }
+
     public void preInitBehaviors(Renderer renderer) throws PhotonException {
         for (Behavior behavior : behaviors.values()) behavior.preInit(renderer, this);
+        for (SceneEntity child : children) child.preInitBehaviors(renderer);
     }
 
     public void initBehaviors(Hydrogen hydrogen) throws PhotonException {
         for (Behavior behavior : behaviors.values()) behavior.init(hydrogen, this);
+        for (SceneEntity child : children) child.initBehaviors(hydrogen);
     }
 
     public void updateBehaviors() throws PhotonException {
         for (Behavior behavior : behaviors.values()) behavior.update();
+        for (SceneEntity child : children) child.updateBehaviors();
     }
 
     public void fixedUpdateBehaviors(float dt) {
         for (Behavior behavior : behaviors.values()) behavior.fixedUpdate(dt);
+        for (SceneEntity child : children) child.fixedUpdateBehaviors(dt);
     }
 
     public void inputBehaviors(Input input) {
         for (Behavior behavior : behaviors.values()) behavior.input(input);
+        for (SceneEntity child : children) child.inputBehaviors(input);
     }
 
     public void applyTransform(IShader shader) throws PhotonException {
         transform.apply(shader);
+        for (SceneEntity child : children) child.applyTransform(shader);
     }
 
     public void renderBehaviors(IShader shader, boolean oncePerEntity) throws PhotonException {
         for (Behavior behavior : behaviors.values()) behavior.render(shader, oncePerEntity);
+        for (SceneEntity child : children) child.renderBehaviors(shader, oncePerEntity);
     }
 
     public String getName() {
@@ -67,6 +82,22 @@ public class SceneEntity {
 
     public Transform getTransform() {
         return transform;
+    }
+
+    public List<SceneEntity> getChildren() {
+        return children;
+    }
+
+    public boolean isChild(SceneEntity child) {
+        return children.contains(child);
+    }
+
+    public boolean isChildOf(SceneEntity parent) {
+        return parent.isChild(this);
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
     }
 
     public IMesh getMesh() {

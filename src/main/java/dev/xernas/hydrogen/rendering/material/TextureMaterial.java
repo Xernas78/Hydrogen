@@ -7,8 +7,12 @@ import dev.xernas.photon.render.shader.Material;
 
 import java.awt.*;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TextureMaterial implements Material {
+
+    private static final Map<Path, ITexture> loadedTextureMaterials = new HashMap<>();
 
     private ITexture texture;
     private Path texturePath;
@@ -23,7 +27,11 @@ public class TextureMaterial implements Material {
 
     @Override
     public ITexture getTexture() throws PhotonException {
-        if (texture == null && texturePath != null) texture = HydrogenUtils.loadTexture(texturePath);
+        if (texture == null && texturePath != null) {
+            if (loadedTextureMaterials.containsKey(texturePath)) return loadedTextureMaterials.get(texturePath);
+            texture = HydrogenUtils.loadTexture(texturePath);
+            loadedTextureMaterials.put(texturePath, texture);
+        }
         if (texture != null) return texture;
         return null;
     }
