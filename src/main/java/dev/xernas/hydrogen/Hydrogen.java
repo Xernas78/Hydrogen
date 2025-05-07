@@ -39,6 +39,7 @@ public abstract class Hydrogen {
 
     private Renderer renderer;
     private IWindow window;
+    private ResourceManager remoteResourceManager;
 
     public abstract String getApplicationName();
 
@@ -59,8 +60,8 @@ public abstract class Hydrogen {
         // Init lib
         Photon.initPhoton();
 
-        ResourceManager remoteResourceManager = getNewResourceManager();
         // All setups
+        remoteResourceManager = getNewResourceManager();
         window = getNewWindow();
         renderer = new Renderer(lib);
 
@@ -170,6 +171,10 @@ public abstract class Hydrogen {
 
     public IWindow getActiveWindow() {
         return window;
+    }
+
+    public ResourceManager getActiveResourceManager() {
+        return remoteResourceManager;
     }
 
     public static int getFps() {

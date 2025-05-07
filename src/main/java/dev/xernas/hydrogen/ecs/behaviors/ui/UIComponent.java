@@ -51,7 +51,7 @@ public class UIComponent implements Behavior {
 
     @Override
     public void input(Input input) {
-        input.setOnResize(window -> {
+        window.setOnResize(window -> {
             parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
             parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
         });
