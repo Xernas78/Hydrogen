@@ -16,6 +16,8 @@ public class Scene {
     private final List<SceneEntity> entities = new ArrayList<>();
     private final Map<String, SceneEntity> entitiesByName = new HashMap<>();
 
+    private final DrawingBoard drawingBoard = new DrawingBoard(this);
+
     public void add(SceneEntity entity) {
         entities.add(entity);
         entitiesByName.put(entity.getName(), entity);
@@ -97,5 +99,9 @@ public class Scene {
 
     public List<SceneEntity> getEntities() {
         return entities;
+    }
+
+    public DrawingBoard board() {
+        return drawingBoard;
     }
 }

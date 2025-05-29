@@ -1,5 +1,6 @@
 package dev.xernas.hydrogen.resource;
 
+import dev.xernas.format.ttf.TTFFormat;
 import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.photon.Lib;
 import dev.xernas.photon.exceptions.PhotonException;
@@ -21,7 +22,7 @@ import java.util.*;
  */
 public class ResourceManager {
 
-    public static final ResourceManager HYDROGEN_RESOURCES = new ResourceManager(Hydrogen.class, "hydrogenShaders", "hydrogenModels", "hydrogenTextures");
+    public static final ResourceManager HYDROGEN_RESOURCES = new ResourceManager(Hydrogen.class, "hydrogenShaders", "hydrogenModels", "hydrogenTextures", "hydrogenFonts");
 
     private static final List<FileSystem> fileSystems = new ArrayList<>();
     private static final String SEPARATOR = "/";
@@ -30,17 +31,19 @@ public class ResourceManager {
     private final String shadersFolder;
     private final String modelsFolder;
     private final String texturesFolder;
+    private final String fontsFolder;
 
     /**
      * Handles every method regarding resources
      * @param origin the class from which we want to use this manager
      * @param shadersFolder the folder which contains all .hydro files (without any slashes)
      */
-    public ResourceManager(Class<?> origin, String shadersFolder, String modelsFolder, String texturesFolder) {
+    public ResourceManager(Class<?> origin, String shadersFolder, String modelsFolder, String texturesFolder, String fontsFolder) {
         this.origin = origin;
         this.shadersFolder = shadersFolder;
         this.modelsFolder = modelsFolder;
         this.texturesFolder = texturesFolder;
+        this.fontsFolder = fontsFolder;
     }
 
     /**
@@ -48,7 +51,7 @@ public class ResourceManager {
      * @param origin the class from which we want to use this manager
      */
     public ResourceManager(Class<?> origin) {
-            this(origin, "shaders", "models", "textures");
+            this(origin, "shaders", "models", "textures", "fonts");
         }
 
     public InputStream getResourceAsStream(String resourcePath) throws PhotonException {
@@ -156,6 +159,17 @@ public class ResourceManager {
     }
 
     // Custom methods
+    public TTFFormat readTtfFile(Path resourcePath) throws PhotonException {
+        if (resourcePath == null) throw new PhotonException("Cannot find TTF file");
+        try {
+            TTFFormat format = TTFFormat.create(resourcePath.toFile());
+            if (!format.isValid()) throw new PhotonException("Invalid TTF format: " + resourcePath);
+            return format;
+        } catch (IOException e) {
+            throw new PhotonException(e.getMessage());
+        }
+    }
+
     public ShaderResource readShaderResource(Path resourcePath) throws PhotonException {
         if (resourcePath == null) throw new PhotonException("Cannot find shader resource");
         String shaderJsonCode = readStringFromPath(resourcePath);
@@ -169,6 +183,26 @@ public class ResourceManager {
         ShaderResource.TypeShaderResource vertexShaderResource = new ShaderResource.TypeShaderResource(vertex.getBoolean("fromHydrogen"), vertex.getString("path"));
         ShaderResource.TypeShaderResource fragmentShaderResource = new ShaderResource.TypeShaderResource(fragment.getBoolean("fromHydrogen"), fragment.getString("path"));
         return new ShaderResource(shaderName, hasLightingSystem, hasPostProcessing, vertexShaderResource, fragmentShaderResource);
+    }
+
+    public Map<String, TTFFormat> getAllTtfFonts() throws PhotonException {
+        Map<String, TTFFormat> fonts = new HashMap<>();
+        Path absoluteFontFolder = getResourceAbsolutePath("fonts");
+        if (absoluteFontFolder == null) return fonts;
+        List<Path> resources = listResources(absoluteFontFolder);
+        for (Path resource : resources) {
+            if (!Files.isRegularFile(resource)) continue;
+            Path trimmed = trimPath(resource);
+            if (trimmed == null) continue;
+            if (!getPathExtension(trimmed).equals("ttf")) continue;
+            try {
+                TTFFormat format = readTtfFile(trimmed);
+                fonts.put(removeFileExtension(trimmed.getFileName().toString(), true), format);
+            } catch (PhotonException e) {
+                e.printStackTrace();
+            }
+        }
+        return fonts;
     }
 
     public List<ShaderResource> getAllShaderResources() throws PhotonException {
@@ -235,6 +269,15 @@ public class ResourceManager {
         if (path == null) return null;
         if (path.startsWith("/")) return getResourcePath(path.toString().substring(1));
         return path;
+    }
+
+    public static String removeFileExtension(String filename, boolean removeAllExtensions) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+
+        String extPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
+        return filename.replaceAll(extPattern, "");
     }
 
     private String getPathExtension(Path path) {

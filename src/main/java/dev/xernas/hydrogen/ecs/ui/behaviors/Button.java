@@ -1,4 +1,4 @@
-package dev.xernas.hydrogen.ecs.behaviors.ui;
+package dev.xernas.hydrogen.ecs.ui.behaviors;
 
 import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.hydrogen.ecs.Behavior;
@@ -14,10 +14,10 @@ import java.util.function.Consumer;
 public class Button implements Behavior {
 
     private Consumer<ButtonEvent> onClick;
-    private Consumer<SceneEntityUI> onHoverEnter;
-    private Consumer<SceneEntityUI> onHoverExit;
+    private Consumer<SceneEntity> onHoverEnter;
+    private Consumer<SceneEntity> onHoverExit;
 
-    private SceneEntityUI parent;
+    private SceneEntity parent;
     private UIComponent uiComponent;
 
     private boolean hovered = false;
@@ -30,12 +30,12 @@ public class Button implements Behavior {
         this.onClick = onClick;
     }
 
-    public Button(Consumer<ButtonEvent> onClick, Consumer<SceneEntityUI> onHoverEnter) {
+    public Button(Consumer<ButtonEvent> onClick, Consumer<SceneEntity> onHoverEnter) {
         this.onClick = onClick;
         this.onHoverEnter = onHoverEnter;
     }
 
-    public Button(Consumer<ButtonEvent> onClick, Consumer<SceneEntityUI> onHoverEnter, Consumer<SceneEntityUI> onHoverExit) {
+    public Button(Consumer<ButtonEvent> onClick, Consumer<SceneEntity> onHoverEnter, Consumer<SceneEntity> onHoverExit) {
         this.onClick = onClick;
         this.onHoverEnter = onHoverEnter;
         this.onHoverExit = onHoverExit;
@@ -43,10 +43,7 @@ public class Button implements Behavior {
 
     @Override
     public void init(Hydrogen hydrogen, SceneEntity parent) throws PhotonException {
-        if (!(parent instanceof SceneEntityUI)) {
-            throw new PhotonException("Button behavior can only be added to SceneEntityUI");
-        }
-        this.parent = (SceneEntityUI) parent;
+        this.parent = parent;
         this.uiComponent = parent.requireBehavior(UIComponent.class);
     }
 
@@ -99,7 +96,7 @@ public class Button implements Behavior {
         return hovered;
     }
 
-    public record ButtonEvent(Input input, SceneEntityUI buttonParent, Key mouseButton, Action action) {
+    public record ButtonEvent(Input input, SceneEntity buttonParent, Key mouseButton, Action action) {
 
     }
 }

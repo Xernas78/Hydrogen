@@ -1,4 +1,4 @@
-package dev.xernas.hydrogen.ecs.behaviors.ui;
+package dev.xernas.hydrogen.ecs.ui.behaviors;
 
 import dev.xernas.hydrogen.Hydrogen;
 import dev.xernas.hydrogen.ecs.Behavior;
@@ -7,65 +7,71 @@ import dev.xernas.hydrogen.ecs.Transform;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.input.Input;
 import dev.xernas.photon.window.IWindow;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class UIComponent implements Behavior {
 
     private final IntSupplier xSupplier, ySupplier, widthSupplier, heightSupplier;
+    private final Supplier<Float> rotation2DSupplier;
+
+    private int xOffset, yOffset, widthResize, heightResize = 0;
     private IWindow window;
     private Transform parentTransform;
     private float zFloat;
 
-    public UIComponent(int x, int y, int width, int height) {
+    public UIComponent(int x, int y, int width, int height, float rotation2D) {
         this.xSupplier = () -> x;
         this.ySupplier = () -> y;
         this.widthSupplier = () -> width;
         this.heightSupplier = () -> height;
+        this.rotation2DSupplier = () -> rotation2D;
         this.zFloat = 0.0f;
     }
 
-    public UIComponent(int x, int y, int width, int height, float z) {
+    public UIComponent(int x, int y, int width, int height, float rotation2D, float z) {
         this.xSupplier = () -> x;
         this.ySupplier = () -> y;
         this.widthSupplier = () -> width;
         this.heightSupplier = () -> height;
+        this.rotation2DSupplier = () -> rotation2D;
         this.zFloat = z;
     }
 
-    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier) {
+    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, Supplier<Float> rotation2D) {
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.widthSupplier = widthSupplier;
         this.heightSupplier = heightSupplier;
+        this.rotation2DSupplier = rotation2D;
         this.zFloat = 0.0f;
     }
 
-    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, float z) {
+    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, Supplier<Float> rotation2D, float z) {
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.widthSupplier = widthSupplier;
         this.heightSupplier = heightSupplier;
+        this.rotation2DSupplier = rotation2D;
         this.zFloat = z;
     }
 
     @Override
     public void init(Hydrogen hydrogen, SceneEntity parent) throws PhotonException {
-        if (!(parent instanceof SceneEntityUI)) {
-            throw new PhotonException("Button behavior can only be added to SceneEntityUI");
-        }
         this.parentTransform = parent.getTransform();
         this.window = hydrogen.getActiveWindow();
         parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
         parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
+        parentTransform.setRotation(0, 0, getRotation2D());
     }
 
     @Override
     public void update() throws PhotonException {
         parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
         parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
+        parentTransform.setRotation(0, 0, getRotation2D());
     }
 
     @Override
@@ -73,7 +79,41 @@ public class UIComponent implements Behavior {
         window.setOnResize(window -> {
             parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
             parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
+            parentTransform.setRotation(0, 0, getRotation2D());
         });
+    }
+
+    public void moveX(int x) {
+        this.xOffset += x;
+    }
+
+    public void moveY(int y) {
+        this.yOffset -= y;
+    }
+
+    public void move(int x, int y) {
+        this.xOffset += x;
+        this.yOffset -= y;
+    }
+
+    public void resizeWidth(int width) {
+        this.widthResize += width;
+    }
+
+    public void resizeHeight(int height) {
+        this.heightResize += height;
+    }
+
+    public void resize(int width, int height) {
+        this.widthResize += width;
+        this.heightResize += height;
+    }
+
+    public void resetOffsets() {
+        this.xOffset = 0;
+        this.yOffset = 0;
+        this.widthResize = 0;
+        this.heightResize = 0;
     }
 
 //    private Vector2i worldPosToPixelPos(Vector3f worldPos, Vector3f scale) {
@@ -133,7 +173,7 @@ public class UIComponent implements Behavior {
 //        return new Vector2i(pixelWidth, pixelHeight);
 //    }
 
-    private Vector3f pixelPosToWorldPos(int x, int y, int width, int height) {
+    public Vector3f pixelPosToWorldPos(int x, int y, int width, int height) {
         int windowWidth = window.getWidth();
         int windowHeight = window.getHeight();
 
@@ -168,7 +208,7 @@ public class UIComponent implements Behavior {
         return new Vector3f(worldX, worldY, 0);
     }
 
-    private Vector3f pixelScaleToWorldScale(int width, int height) {
+    public Vector3f pixelScaleToWorldScale(int width, int height) {
         int windowWidth = window.getWidth();
         int windowHeight = window.getHeight();
 
@@ -191,19 +231,19 @@ public class UIComponent implements Behavior {
     }
 
     public int getWidth() {
-        return widthSupplier.getAsInt();
+        return widthSupplier.getAsInt() + widthResize;
     }
 
     public int getHeight() {
-        return heightSupplier.getAsInt();
+        return heightSupplier.getAsInt() + heightResize;
     }
 
     public int getX() {
-        return xSupplier.getAsInt();
+        return xSupplier.getAsInt() + xOffset;
     }
 
     public int getY() {
-        return ySupplier.getAsInt();
+        return ySupplier.getAsInt() + yOffset;
     }
 
     public void setZ(float zFloat) {
@@ -212,5 +252,9 @@ public class UIComponent implements Behavior {
 
     public float getZ() {
         return zFloat;
+    }
+
+    public float getRotation2D() {
+        return rotation2DSupplier.get();
     }
 }

@@ -1,8 +1,10 @@
 package dev.xernas.hydrogen;
 
+import dev.xernas.format.ttf.TTFFormat;
 import dev.xernas.hydrogen.ecs.Scene;
 import dev.xernas.hydrogen.ecs.Scenes;
 import dev.xernas.hydrogen.ecs.entities.Camera;
+import dev.xernas.hydrogen.ecs.ui.Fonts;
 import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.hydrogen.resource.ResourceManager;
 import dev.xernas.photon.Lib;
@@ -15,6 +17,7 @@ import org.lwjgl.opengl.GLUtil;
 import java.awt.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -71,6 +74,7 @@ public abstract class Hydrogen {
             throw new PhotonException("Window is null");
         }
 
+        // Load resources
         Collection<ResourceManager.ShaderResource> localShaderResources = ResourceManager.HYDROGEN_RESOURCES.getAllShaderResources();
         Collection<ResourceManager.ShaderResource> remoteShaderResources = remoteResourceManager.getAllShaderResources();
         Collection<IShader> shaders = ResourceManager.fuseCollections(
@@ -78,6 +82,9 @@ public abstract class Hydrogen {
                 remoteResourceManager.shaderResourcesToShaders(lib, remoteShaderResources)
         );
         renderer.loadShaders(shaders);
+
+        Fonts.fillFonts(ResourceManager.HYDROGEN_RESOURCES.getAllTtfFonts());
+        Fonts.fillFonts(remoteResourceManager.getAllTtfFonts());
 
         Scenes.registerScenes(getScenes());
         if (Scenes.isEmpty()) throw new PhotonException("No scenes found");
@@ -154,7 +161,7 @@ public abstract class Hydrogen {
     }
 
     public void stop() {
-        window.setShouldClose(true);
+        running = false;
     }
 
     public static boolean isRunning() {

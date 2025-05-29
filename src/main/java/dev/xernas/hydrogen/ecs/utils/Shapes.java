@@ -80,6 +80,68 @@ public class Shapes {
         return meshBuilder;
     }
 
+    public static Mesh.Builder circle(int resolution) {
+        int vertexCount = resolution + 1;
+        float[] vertices = new float[vertexCount * 3];
+        float[] normals = new float[vertexCount * 3];
+        float[] texCoords = new float[vertexCount * 2];
+        int[] indices = new int[resolution * 3];
+
+        for (int i = 0; i < vertexCount; i++) {
+            float angle = (float) (i * 2 * Math.PI / resolution);
+            float x = (float) Math.cos(angle);
+            float y = (float) Math.sin(angle);
+
+            vertices[i * 3] = x;
+            vertices[i * 3 + 1] = y;
+            vertices[i * 3 + 2] = 0.0f;
+
+            normals[i * 3] = 0.0f;
+            normals[i * 3 + 1] = 0.0f;
+            normals[i * 3 + 2] = 1.0f;
+
+            texCoords[i * 2] = (x + 1) / 2;
+            texCoords[i * 2 + 1] = (y + 1) / 2;
+
+            if (i < resolution) {
+                indices[i * 3] = i;
+                indices[i * 3 + 1] = (i + 1) % resolution;
+                indices[i * 3 + 2] = resolution; // Center vertex
+            }
+        }
+
+        Mesh.Builder meshBuilder = new Mesh.Builder();
+        meshBuilder.vertices(Mesh.floatArrayToFloat3Vectors(vertices));
+        meshBuilder.normals(Mesh.floatArrayToFloat3Vectors(normals));
+        meshBuilder.textureCoords(Mesh.floatArrayToFloat2Vectors(texCoords));
+        meshBuilder.triangles(Mesh.integerArrayToInteger3Vectors(indices));
+
+        return meshBuilder;
+    }
+
+    public static Mesh.Builder triangle() {
+        Mesh.Builder meshBuilder = new Mesh.Builder();
+        meshBuilder.vertices(
+            new Vector3f(-0.5f, -0.5f, 0.0f),
+            new Vector3f(0.5f, -0.5f, 0.0f),
+            new Vector3f(0.0f, 0.5f, 0.0f)
+        );
+        meshBuilder.triangles(
+            new Vector3i(0, 1, 2)
+        );
+        meshBuilder.textureCoords(
+            new Vector2f(0, 0),
+            new Vector2f(1, 0),
+            new Vector2f(0.5f, 1)
+        );
+        meshBuilder.normals(
+            new Vector3f(0, 0, 1),
+            new Vector3f(0, 0, 1),
+            new Vector3f(0, 0, 1)
+        );
+        return meshBuilder;
+    }
+
     public static Mesh.Builder sphere(int resolution) {
         int vertexCount = (resolution + 1) * (resolution + 1);
         float[] vertices = new float[vertexCount * 3];

@@ -18,6 +18,10 @@ public class SceneEntity {
     private final Map<Class<? extends Behavior>, Behavior> behaviors = new HashMap<>();
     private final List<SceneEntity> children = new ArrayList<>();
 
+    public SceneEntity(Transform transform, Behavior... behaviors) {
+        this(UUID.randomUUID().toString(), transform, behaviors);
+    }
+
     public SceneEntity(String name, Transform transform, Behavior... behaviors) {
         this.name = name;
         this.transform = transform;
