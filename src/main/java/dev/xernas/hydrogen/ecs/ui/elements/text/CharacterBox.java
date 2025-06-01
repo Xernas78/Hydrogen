@@ -1,9 +1,9 @@
-package dev.xernas.hydrogen.ecs.ui.entities.text;
+package dev.xernas.hydrogen.ecs.ui.elements.text;
 
 import dev.xernas.format.ttf.GlyphTable;
 import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.ui.Fonts;
-import dev.xernas.hydrogen.ecs.ui.SceneEntityUI;
+import dev.xernas.hydrogen.ecs.ui.elements.UIEntity;
 import dev.xernas.hydrogen.rendering.material.ColorMaterial;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.Material;
@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.IntSupplier;
 
-public class CharacterBox implements SceneEntityUI {
+public class CharacterBox extends UIEntity {
 
     private final Character character;
     private final Fonts.Font font;
@@ -58,10 +58,5 @@ public class CharacterBox implements SceneEntityUI {
     public IntSupplier getHeight() {
         GlyphTable.Glyph glyph = font.format().glyphForChar(character);
         return () -> (int) ((glyph.yMax() - glyph.yMin()) * (font.size() / 100f));
-    }
-
-    @Override
-    public @NotNull List<Behavior> getBehaviors() {
-        return List.of();
     }
 }

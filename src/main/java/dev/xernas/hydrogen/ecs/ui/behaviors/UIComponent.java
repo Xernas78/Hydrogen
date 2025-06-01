@@ -20,7 +20,6 @@ public class UIComponent implements Behavior {
     private int xOffset, yOffset, widthResize, heightResize = 0;
     private IWindow window;
     private Transform parentTransform;
-    private float zFloat;
 
     public UIComponent(int x, int y, int width, int height, float rotation2D) {
         this.xSupplier = () -> x;
@@ -28,16 +27,6 @@ public class UIComponent implements Behavior {
         this.widthSupplier = () -> width;
         this.heightSupplier = () -> height;
         this.rotation2DSupplier = () -> rotation2D;
-        this.zFloat = 0.0f;
-    }
-
-    public UIComponent(int x, int y, int width, int height, float rotation2D, float z) {
-        this.xSupplier = () -> x;
-        this.ySupplier = () -> y;
-        this.widthSupplier = () -> width;
-        this.heightSupplier = () -> height;
-        this.rotation2DSupplier = () -> rotation2D;
-        this.zFloat = z;
     }
 
     public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, Supplier<Float> rotation2D) {
@@ -46,16 +35,6 @@ public class UIComponent implements Behavior {
         this.widthSupplier = widthSupplier;
         this.heightSupplier = heightSupplier;
         this.rotation2DSupplier = rotation2D;
-        this.zFloat = 0.0f;
-    }
-
-    public UIComponent(IntSupplier xSupplier, IntSupplier ySupplier, IntSupplier widthSupplier, IntSupplier heightSupplier, Supplier<Float> rotation2D, float z) {
-        this.xSupplier = xSupplier;
-        this.ySupplier = ySupplier;
-        this.widthSupplier = widthSupplier;
-        this.heightSupplier = heightSupplier;
-        this.rotation2DSupplier = rotation2D;
-        this.zFloat = z;
     }
 
     @Override
@@ -72,15 +51,6 @@ public class UIComponent implements Behavior {
         parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
         parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
         parentTransform.setRotation(0, 0, getRotation2D());
-    }
-
-    @Override
-    public void input(Input input) {
-        window.setOnResize(window -> {
-            parentTransform.setPosition(pixelPosToWorldPos(getX(), getY(), getWidth(), getHeight()));
-            parentTransform.setScale(pixelScaleToWorldScale(getWidth(), getHeight()));
-            parentTransform.setRotation(0, 0, getRotation2D());
-        });
     }
 
     public void moveX(int x) {
@@ -244,14 +214,6 @@ public class UIComponent implements Behavior {
 
     public int getY() {
         return ySupplier.getAsInt() + yOffset;
-    }
-
-    public void setZ(float zFloat) {
-        this.zFloat = zFloat;
-    }
-
-    public float getZ() {
-        return zFloat;
     }
 
     public float getRotation2D() {

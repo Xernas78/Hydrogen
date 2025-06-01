@@ -1,7 +1,7 @@
 package dev.xernas.hydrogen.ecs;
 
 import dev.xernas.hydrogen.ecs.ui.behaviors.UIComponent;
-import dev.xernas.hydrogen.ecs.ui.SceneEntityUI;
+import dev.xernas.hydrogen.ecs.ui.elements.UIEntity;
 import dev.xernas.hydrogen.ecs.utils.Shapes;
 import dev.xernas.hydrogen.rendering.Mesh;
 import dev.xernas.hydrogen.rendering.material.ColorMaterial;
@@ -9,6 +9,7 @@ import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.Material;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -21,23 +22,20 @@ public class DrawingBoard {
     }
 
     public SceneEntity drawShape(Mesh.Builder meshBuilder, Material material, IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height, String shader) throws PhotonException {
-        DrawableEntity drawableEntity = new DrawableEntity(shader, meshBuilder, material, x, y, width, height);
-        SceneEntity entity = drawableEntity.getEntity();
-        scene.add(entity);
+        DrawableEntity entity = new DrawableEntity(shader, meshBuilder, material, x, y, width, height);
+        scene.instantiate(entity);
         return entity;
     }
 
     public SceneEntity drawShape(Mesh.Builder meshBuilder, Material material, IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height) throws PhotonException {
-        DrawableEntity drawableEntity = new DrawableEntity(meshBuilder, material, x, y, width, height);
-        SceneEntity entity = drawableEntity.getEntity();
-        scene.add(entity);
+        SceneEntity entity = new DrawableEntity(meshBuilder, material, x, y, width, height);
+        scene.instantiate(entity);
         return entity;
     }
 
     public SceneEntity drawTriangle(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height, Material material) throws PhotonException {
-        DrawableEntity drawableEntity = new DrawableEntity(Shapes.triangle(), material, x, y, width, height);
-        SceneEntity entity = drawableEntity.getEntity();
-        scene.add(entity);
+        SceneEntity entity = new DrawableEntity(Shapes.triangle(), material, x, y, width, height);
+        scene.instantiate(entity);
         return entity;
     }
 
@@ -50,9 +48,8 @@ public class DrawingBoard {
     }
 
     public SceneEntity drawRect(IntSupplier x, IntSupplier y, IntSupplier width, IntSupplier height, Material material) throws PhotonException {
-        DrawableEntity drawableEntity = new DrawableEntity(material, x, y, width, height);
-        SceneEntity entity = drawableEntity.getEntity();
-        scene.add(entity);
+        DrawableEntity entity = new DrawableEntity(material, x, y, width, height);
+        scene.instantiate(entity);
         return entity;
     }
 
@@ -80,14 +77,62 @@ public class DrawingBoard {
         return drawDot(() -> x, () -> y, () -> radius, new ColorMaterial(color));
     }
 
-    public SceneEntity drawLine(SceneEntity start, SceneEntity end, IntSupplier thickness, Material material) throws PhotonException {
-        UIComponent startUI = start.requireBehavior(UIComponent.class);
-        UIComponent endUI = end.requireBehavior(UIComponent.class);
+    public static UIEntity createLine(IntSupplier x1, IntSupplier y1, IntSupplier x2, IntSupplier y2, IntSupplier thickness, Material material) {
+        IntSupplier dx = () -> x1.getAsInt() - x2.getAsInt();
+        IntSupplier dy = () -> y1.getAsInt() - y2.getAsInt();
+        IntSupplier length = () -> (int) Math.sqrt(dx.getAsInt() * dx.getAsInt() + dy.getAsInt() * dy.getAsInt());
+        IntSupplier thicknessMaxed = () -> Math.max(thickness.getAsInt(), 1);
+        return new UIEntity() {
+            @Override
+            public Material getMaterial() {
+                return material;
+            }
+
+            @Override
+            public IntSupplier getX() {
+                return () -> (int) (
+                        (x1.getAsInt() + x2.getAsInt()) / 2f - length.getAsInt() / 2f
+                );
+            }
+
+            @Override
+            public IntSupplier getY() {
+                return () -> (int) (
+                        (y1.getAsInt() + y2.getAsInt()) / 2f - thicknessMaxed.getAsInt() / 2f
+                );
+            }
+
+            @Override
+            public IntSupplier getWidth() {
+                return length;
+            }
+
+            @Override
+            public IntSupplier getHeight() {
+                return thicknessMaxed;
+            }
+
+            @Override
+            public Supplier<Float> getRotation2D() {
+                return () -> 360 - (float) Math.toDegrees(Math.atan2(dy.getAsInt(), dx.getAsInt()));
+            }
+        };
+    }
+
+    public SceneEntity drawLine(IntSupplier x1, IntSupplier y1, IntSupplier x2, IntSupplier y2, IntSupplier thickness, Material material) throws PhotonException {
+        SceneEntity entity = createLine(x1, y1, x2, y2, thickness, material);
+        scene.instantiate(entity);
+        return entity;
+    }
+
+    public static UIEntity createLine(SceneEntity start, SceneEntity end, IntSupplier thickness, Material material) {
+        UIComponent startUI = Objects.requireNonNull(start.getBehavior(UIComponent.class));
+        UIComponent endUI = Objects.requireNonNull(end.getBehavior(UIComponent.class));
         IntSupplier dx = () -> endUI.getX() - startUI.getX();
         IntSupplier dy = () -> endUI.getY() - startUI.getY();
         IntSupplier length = () -> (int) Math.sqrt(dx.getAsInt() * dx.getAsInt() + dy.getAsInt() * dy.getAsInt());
         IntSupplier thicknessMaxed = () -> Math.max(thickness.getAsInt(), 1);
-        SceneEntityUI drawable = new SceneEntityUI() {
+        return new UIEntity() {
             @Override
             public Material getMaterial() {
                 return material;
@@ -122,12 +167,15 @@ public class DrawingBoard {
                 return () -> 360 - (float) Math.toDegrees(Math.atan2(dy.getAsInt(), dx.getAsInt()));
             }
         };
-        SceneEntity entity = drawable.getEntity();
-        scene.add(entity);
+    }
+
+    public SceneEntity drawLine(SceneEntity start, SceneEntity end, IntSupplier thickness, Material material) throws PhotonException {
+        SceneEntity entity = createLine(start, end, thickness, material);
+        scene.instantiate(entity);
         return entity;
     }
 
-    public static class DrawableEntity implements SceneEntityUI {
+    public static class DrawableEntity extends UIEntity {
 
         private final String shader;
         private final Mesh.Builder meshBuilder;
@@ -161,7 +209,7 @@ public class DrawingBoard {
         }
 
         @Override
-        public Mesh.Builder getMesh() {
+        public Mesh.Builder getMeshShape() {
             return meshBuilder;
         }
 

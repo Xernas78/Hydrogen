@@ -5,6 +5,7 @@ import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.hydrogen.ecs.entities.Camera;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.input.Input;
+import dev.xernas.photon.window.IWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,27 +14,33 @@ import java.util.Map;
 
 public class Scene {
 
+    private final Hydrogen hydrogen;
     private final List<SceneEntity> entities = new ArrayList<>();
     private final Map<String, SceneEntity> entitiesByName = new HashMap<>();
-
     private final DrawingBoard drawingBoard = new DrawingBoard(this);
+
+    public Scene(Hydrogen hydrogen) {
+        this.hydrogen = hydrogen;
+    }
 
     public void add(SceneEntity entity) {
         entities.add(entity);
         entitiesByName.put(entity.getName(), entity);
+        Scenes.registerEntityForScene(entity, this);
+        for (SceneEntity e : entity.getChildren()) add(e);
     }
 
     public void load(Renderer renderer) throws PhotonException {
         int cameras = 0;
         for (SceneEntity entity : entities) {
             if (entity.getClass() == Camera.class) cameras++;
-            entity.preInitBehaviors(renderer);
+            entity.preInit(renderer);
         }
         if (cameras == 0) throw new PhotonException("There is no camera");
         if (cameras > 1) throw new PhotonException("There is more than one camera");
     }
 
-    public void init(Hydrogen hydrogen) throws PhotonException {
+    public void init() throws PhotonException {
         for (SceneEntity entity : entities) entity.initBehaviors(hydrogen);
     }
 
@@ -47,26 +54,28 @@ public class Scene {
         for (SceneEntity entity : entitiesFixedUpdate) entity.fixedUpdateBehaviors(dt);
     }
 
-    public void input(Input input) {
+    public void input(IWindow window) {
         List<SceneEntity> entitiesInput = new ArrayList<>(this.entities);
-        for (SceneEntity entity : entitiesInput) entity.inputBehaviors(input);
+        for (SceneEntity entity : entitiesInput) entity.inputBehaviors(window);
     }
 
-    public void instantiate(Hydrogen hydrogen, SceneEntity entity) throws PhotonException {
-        instantiate(hydrogen, false, entity);
+    public void instantiate(SceneEntity entity) throws PhotonException {
+        instantiate(false, false, entity);
     }
 
-    public void instantiate(Hydrogen hydrogen, boolean sameMesh, SceneEntity... entitiesToInstantiate) throws PhotonException {
+    public void instantiate(boolean forcePreInit, SceneEntity entity) throws PhotonException {
+        instantiate(forcePreInit, false, entity);
+    }
+
+    public void instantiate(boolean forcePreInit, boolean sameMesh, SceneEntity... entitiesToInstantiate) throws PhotonException {
         Renderer activeRenderer = hydrogen.getActiveRenderer();
         for (SceneEntity entity : entitiesToInstantiate) {
-            if (!Hydrogen.isRunning()) {
-                entities.add(entity);
-                entitiesByName.put(entity.getName(), entity);
+            if (!Hydrogen.isRunning() && !forcePreInit) {
+                add(entity);
                 return;
             }
-            entities.add(entity);
-            entitiesByName.put(entity.getName(), entity);
-            entity.preInitBehaviors(activeRenderer);
+            add(entity);
+            entity.preInit(activeRenderer);
         }
         activeRenderer.initSceneEntities(sameMesh, entitiesToInstantiate);
         for (SceneEntity entity : entitiesToInstantiate) entity.initBehaviors(hydrogen);
@@ -75,14 +84,12 @@ public class Scene {
     public void destroy(SceneEntity entity) {
         entities.remove(entity);
         entitiesByName.remove(entity.getName());
+        Scenes.unregisterEntityForScene(entity);
     }
 
     public void destroy(String name) {
         SceneEntity entity = entitiesByName.get(name);
-        if (entity != null) {
-            entities.remove(entity);
-            entitiesByName.remove(name);
-        }
+        if (entity != null) destroy(entity);
     }
 
     public <T extends SceneEntity> T getEntity(String name) {

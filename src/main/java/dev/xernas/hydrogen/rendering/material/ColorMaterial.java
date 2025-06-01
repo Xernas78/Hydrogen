@@ -32,4 +32,8 @@ public class ColorMaterial implements Material {
     public void setColor(Color color) {
         this.color = color;
     }
+
+    public static ColorMaterial randomColor() {
+        return new ColorMaterial(new Color((int) (Math.random() * 0x1000000)));
+    }
 }

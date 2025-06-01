@@ -5,6 +5,7 @@ import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.input.Input;
 import dev.xernas.photon.render.shader.IShader;
+import dev.xernas.photon.window.IWindow;
 
 public interface Behavior {
 
@@ -20,7 +21,7 @@ public interface Behavior {
 
     };
 
-    default void input(Input input) {
+    default void input(IWindow window) {
 
     }
 

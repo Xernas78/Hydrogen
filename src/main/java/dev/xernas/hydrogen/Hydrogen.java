@@ -54,10 +54,6 @@ public abstract class Hydrogen {
 
     public abstract List<Scene> getScenes() throws PhotonException;
 
-    public void postInit() {
-
-    }
-
     public void launch(Lib lib, int monitorIndex, float timeStep, boolean debug) throws PhotonException {
         library = lib;
         // Init lib
@@ -95,7 +91,7 @@ public abstract class Hydrogen {
         window.init();
         renderer.init();
 
-        Scenes.initFirstScene(this);
+        Scenes.initFirstScene();
 
         if (lib == Lib.OPENGL) if (debug) GLUtil.setupDebugMessageCallback();
 
@@ -123,7 +119,7 @@ public abstract class Hydrogen {
 
             window.update();
 
-            Scenes.inputCurrentScene(window.getInput());
+            Scenes.inputCurrentScene(window);
             window.updateInput();
 
             while (fixedUnprocessedTime >= FIXED_FRAMETIME) {

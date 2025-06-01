@@ -8,6 +8,7 @@ import dev.xernas.photon.input.Action;
 import dev.xernas.photon.input.Input;
 import dev.xernas.photon.input.Key;
 import dev.xernas.photon.input.MousePosition;
+import dev.xernas.photon.window.IWindow;
 
 import java.util.function.Consumer;
 
@@ -53,7 +54,8 @@ public class Button implements Behavior {
     }
 
     @Override
-    public void input(Input input) {
+    public void input(IWindow window) {
+        Input input = window.getInput();
         if (isMouseOver(input.getMousePosition())) {
             hovered = true;
             if (input.isReleasing(Key.MOUSE_LEFT)) if (onClick != null) onClick.accept(new ButtonEvent(input, parent, Key.MOUSE_LEFT, Action.RELEASE));

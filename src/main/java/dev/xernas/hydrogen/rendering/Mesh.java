@@ -12,6 +12,8 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.util.Objects;
+
 public class Mesh {
 
     private final Vector3f[] vertices;
@@ -28,11 +30,11 @@ public class Mesh {
         this.material = material != null ? material : new DefaultMaterial();
     }
 
-    public IMesh toIMesh() throws PhotonException {
+    public IMesh toIMesh() {
         Lib lib = Hydrogen.getLibrary();
         return switch (lib) {
             case OPENGL -> new GLMesh(floatVectorsToFloatArray(vertices), indices, floatVectorsToFloatArray(normals), floatVectorsToFloatArray(textureCoords), material);
-            default -> throw new PhotonException("Unsupported library: " + lib);
+            default -> throw new IllegalStateException("Unexpected value: " + lib);
         };
     }
 
@@ -151,7 +153,7 @@ public class Mesh {
             return this;
         }
 
-        public IMesh build() throws PhotonException {
+        public IMesh build() {
             return new Mesh(vertices, indices, textureCoords, normals, material).toIMesh();
         }
     }

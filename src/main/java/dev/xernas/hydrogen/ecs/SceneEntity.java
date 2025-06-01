@@ -5,9 +5,9 @@ import dev.xernas.hydrogen.ecs.behaviors.utils.BehaviorUtils;
 import dev.xernas.hydrogen.rendering.Renderer;
 import dev.xernas.hydrogen.ecs.behaviors.MeshRenderer;
 import dev.xernas.photon.exceptions.PhotonException;
-import dev.xernas.photon.input.Input;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.IShader;
+import dev.xernas.photon.window.IWindow;
 
 import java.util.*;
 
@@ -19,68 +19,59 @@ public class SceneEntity {
     private final List<SceneEntity> children = new ArrayList<>();
 
     public SceneEntity(Transform transform, Behavior... behaviors) {
-        this(UUID.randomUUID().toString(), transform, behaviors);
+        this(null, transform, behaviors);
     }
 
     public SceneEntity(String name, Transform transform, Behavior... behaviors) {
-        this.name = name;
+        if (name == null || name.isEmpty()) this.name = UUID.randomUUID().toString();
+        else this.name = name;
         this.transform = transform;
+        addBehaviors(behaviors);
+    }
+
+    public final void addBehaviors(Behavior... behaviors) {
         for (Behavior behavior : behaviors) {
             if (behavior == null) continue;
             this.behaviors.put(behavior.getClass(), behavior);
         }
     }
 
-    public void addBehaviors(Behavior... behaviors) {
-        for (Behavior behavior : behaviors) {
-            if (behavior == null) continue;
-            this.behaviors.put(behavior.getClass(), behavior);
-        }
-    }
-
-    public void addChildren(SceneEntity... children) {
+    public final void addChildren(SceneEntity... children) {
         for (SceneEntity child : children) {
             if (child == null) continue;
             this.children.add(child);
         }
     }
 
-    public void preInitBehaviors(Renderer renderer) throws PhotonException {
-        for (Behavior behavior : behaviors.values()) behavior.preInit(renderer, this);
-        for (SceneEntity child : children) child.preInitBehaviors(renderer);
+    public final void preInit(Renderer renderer) throws PhotonException {
+        for (Behavior behavior : getBehaviors().values()) behavior.preInit(renderer, this);
     }
 
-    public void initBehaviors(Hydrogen hydrogen) throws PhotonException {
-        for (Behavior behavior : behaviors.values()) behavior.init(hydrogen, this);
-        for (SceneEntity child : children) child.initBehaviors(hydrogen);
+    public final void initBehaviors(Hydrogen hydrogen) throws PhotonException {
+        for (Behavior behavior : getBehaviors().values()) behavior.init(hydrogen, this);
     }
 
-    public void updateBehaviors() throws PhotonException {
-        for (Behavior behavior : behaviors.values()) behavior.update();
-        for (SceneEntity child : children) child.updateBehaviors();
+    public final void updateBehaviors() throws PhotonException {
+        for (Behavior behavior : getBehaviors().values()) behavior.update();
     }
 
-    public void fixedUpdateBehaviors(float dt) {
-        for (Behavior behavior : behaviors.values()) behavior.fixedUpdate(dt);
-        for (SceneEntity child : children) child.fixedUpdateBehaviors(dt);
+    public final void fixedUpdateBehaviors(float dt) {
+        for (Behavior behavior : getBehaviors().values()) behavior.fixedUpdate(dt);
     }
 
-    public void inputBehaviors(Input input) {
-        for (Behavior behavior : behaviors.values()) behavior.input(input);
-        for (SceneEntity child : children) child.inputBehaviors(input);
+    public final void inputBehaviors(IWindow window) {
+        for (Behavior behavior : getBehaviors().values()) behavior.input(window);
     }
 
-    public void applyTransform(IShader shader) throws PhotonException {
+    public final void applyTransform(IShader shader) throws PhotonException {
         transform.apply(shader);
-        for (SceneEntity child : children) child.applyTransform(shader);
     }
 
-    public void renderBehaviors(IShader shader, boolean oncePerEntity) throws PhotonException {
-        for (Behavior behavior : behaviors.values()) behavior.render(shader, oncePerEntity);
-        for (SceneEntity child : children) child.renderBehaviors(shader, oncePerEntity);
+    public final void renderBehaviors(IShader shader, boolean oncePerEntity) throws PhotonException {
+        for (Behavior behavior : getBehaviors().values()) behavior.render(shader, oncePerEntity);
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -88,52 +79,56 @@ public class SceneEntity {
         return transform;
     }
 
-    public List<SceneEntity> getChildren() {
+    public Map<Class<? extends Behavior>, Behavior> getBehaviors() {
+        return behaviors;
+    }
+
+    public final List<SceneEntity> getChildren() {
         return children;
     }
 
-    public boolean isChild(SceneEntity child) {
-        return children.contains(child);
+    public final boolean isChild(SceneEntity child) {
+        return getChildren().contains(child);
     }
 
-    public boolean isChildOf(SceneEntity parent) {
+    public final boolean isChildOf(SceneEntity parent) {
         return parent.isChild(this);
     }
 
-    public boolean hasChildren() {
-        return !children.isEmpty();
+    public final boolean hasChildren() {
+        return !getChildren().isEmpty();
     }
 
-    public IMesh getMesh() {
+    public final Scene getScene() throws PhotonException {
+        return Scenes.byEntity(this);
+    }
+
+    public final IMesh getMesh() {
         if (!hasBehavior(MeshRenderer.class)) return null;
         MeshRenderer renderer = getBehavior(MeshRenderer.class);
         return renderer.getMesh();
     }
 
-    public void setMesh(IMesh mesh) {
+    public final void setMesh(IMesh mesh) {
         if (!hasBehavior(MeshRenderer.class)) return;
         MeshRenderer renderer = getBehavior(MeshRenderer.class);
         renderer.setMesh(mesh);
     }
 
-    public <T extends Behavior> boolean hasBehavior(Class<T> behaviorClass) {
-        return behaviors.getOrDefault(behaviorClass, null) != null;
+    public final <T extends Behavior> boolean hasBehavior(Class<T> behaviorClass) {
+        return getBehaviors().getOrDefault(behaviorClass, null) != null;
     }
 
-    public <T extends Behavior> T getBehavior(Class<T> type) {
-        Behavior behavior = behaviors.get(type);
+    public final <T extends Behavior> T getBehavior(Class<T> type) {
+        Behavior behavior = getBehaviors().get(type);
         return (T) behavior;
     }
 
-    public <T extends Behavior> T requireBehavior(Class<T> type) throws PhotonException {
+    public final <T extends Behavior> T requireBehavior(Class<T> type) throws PhotonException {
         return BehaviorUtils.requireNonNullBehavior(
                 getBehavior(type),
                 name + " (SceneEntity) does not have the required behavior of type " + type.getSimpleName()
         );
-    }
-
-    public List<Behavior> getBehaviors() {
-        return new ArrayList<>(behaviors.values());
     }
 
 }

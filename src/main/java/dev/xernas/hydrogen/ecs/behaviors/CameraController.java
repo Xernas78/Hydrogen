@@ -10,6 +10,7 @@ import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.input.Input;
 import dev.xernas.photon.input.Key;
 import dev.xernas.photon.utils.MathUtils;
+import dev.xernas.photon.window.IWindow;
 import org.joml.Vector3f;
 
 public class CameraController implements Behavior {
@@ -48,7 +49,8 @@ public class CameraController implements Behavior {
     }
 
     @Override
-    public void input(Input input) {
+    public void input(IWindow window) {
+        Input input = window.getInput();
         direction = new Vector3f();
         rotation = new Vector3f();
         if (input.keyPress(Key.KEY_Z)) {
