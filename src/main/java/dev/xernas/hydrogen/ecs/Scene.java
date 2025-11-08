@@ -54,7 +54,7 @@ public class Scene {
         for (SceneEntity entity : entitiesFixedUpdate) entity.fixedUpdateBehaviors(dt);
     }
 
-    public void input(IWindow window) {
+    public void input(IWindow window) throws PhotonException {
         List<SceneEntity> entitiesInput = new ArrayList<>(this.entities);
         for (SceneEntity entity : entitiesInput) entity.inputBehaviors(window);
     }
@@ -85,11 +85,17 @@ public class Scene {
         entities.remove(entity);
         entitiesByName.remove(entity.getName());
         Scenes.unregisterEntityForScene(entity);
+        Renderer activeRenderer = hydrogen.getActiveRenderer();
+        activeRenderer.destroySceneEntity(entity);
     }
 
     public void destroy(String name) {
         SceneEntity entity = entitiesByName.get(name);
         if (entity != null) destroy(entity);
+    }
+
+    public Camera getCamera() {
+        return getEntity(Camera.DEFAULT_NAME);
     }
 
     public <T extends SceneEntity> T getEntity(String name) {

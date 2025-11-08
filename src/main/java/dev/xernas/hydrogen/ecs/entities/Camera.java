@@ -7,6 +7,8 @@ import org.joml.Vector3f;
 
 public class Camera extends SceneEntity {
 
+    public static final String DEFAULT_NAME = "Camera";
+
     private final Transform.CameraTransform transform;
     private final float zNear;
     private final float zFar;
@@ -29,7 +31,7 @@ public class Camera extends SceneEntity {
     }
 
     public Camera(Vector3f position, CameraController cameraController, float zNear, float zFar, int fov) {
-        super("Camera", new Transform(), cameraController);
+        super(DEFAULT_NAME, new Transform(), cameraController);
         transform = new Transform.CameraTransform(position);
         this.zNear = zNear;
         this.zFar = zFar;

@@ -1,13 +1,10 @@
-package dev.xernas.hydrogen.ecs.ui.elements;
+package dev.xernas.hydrogen.ecs.ui.entities;
 
 import dev.xernas.hydrogen.ecs.DrawingBoard;
 import dev.xernas.hydrogen.ecs.SceneEntity;
 import dev.xernas.hydrogen.ecs.utils.Shapes;
 import dev.xernas.hydrogen.rendering.material.ColorMaterial;
-import dev.xernas.photon.exceptions.PhotonException;
 import dev.xernas.photon.render.shader.Material;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -62,7 +59,7 @@ public abstract class CoordinateSystem extends UIEntity {
                 SceneEntity lastEntity = dotsOfFunction.get(j - 1);
                 SceneEntity currentEntity = dotsOfFunction.get(j);
                 if (lastEntity == null || currentEntity == null) continue;
-                UIEntity line = DrawingBoard. createLine(lastEntity, currentEntity, () -> dotRadius.getAsInt() * 2, dotsOfFunction.get(j).getMaterial());
+                UIEntity line = DrawingBoard.createLine(getShader(), lastEntity, currentEntity, () -> dotRadius.getAsInt() * 2, dotsOfFunction.get(j).getMaterial());
                 children.add(line);
             }
             children.addAll(dotsOfFunction);
@@ -71,6 +68,7 @@ public abstract class CoordinateSystem extends UIEntity {
         // Axis lines
         if (hasAxis) {
             UIEntity xAxis = DrawingBoard.createLine(
+                    getShader(),
                     fromCoordinateToScreenX((this::getRangeBeginX)),
                     fromCoordinateToScreenY(() -> 0.0),
                     fromCoordinateToScreenX(this::getRangeEndX),
@@ -79,6 +77,7 @@ public abstract class CoordinateSystem extends UIEntity {
                     new ColorMaterial(Color.BLACK)
             );
             UIEntity yAxis = DrawingBoard.createLine(
+                    getShader(),
                     fromCoordinateToScreenX(() -> 0.0),
                     fromCoordinateToScreenY(this::getRangeBeginY),
                     fromCoordinateToScreenX(() -> 0.0),
@@ -95,6 +94,7 @@ public abstract class CoordinateSystem extends UIEntity {
                 if (i == 0 && hasAxis) continue; // Skip the axis line
                 int finalI = i;
                 UIEntity verticalLine = DrawingBoard.createLine(
+                        getShader(),
                         fromCoordinateToScreenX(() -> finalI),
                         fromCoordinateToScreenY(() -> rangeBeginY),
                         fromCoordinateToScreenX(() -> finalI),
@@ -108,6 +108,7 @@ public abstract class CoordinateSystem extends UIEntity {
                 if (j == 0 && hasAxis) continue; // Skip the axis line
                 int finalJ = j;
                 UIEntity horizontalLine = DrawingBoard.createLine(
+                        getShader(),
                         fromCoordinateToScreenX(() -> rangeBeginX),
                         fromCoordinateToScreenY(() -> finalJ),
                         fromCoordinateToScreenX(() -> rangeEndX),
@@ -123,7 +124,7 @@ public abstract class CoordinateSystem extends UIEntity {
     }
 
     @Override
-    public final String getShader() {
+    public String getShader() {
         return planeDisplayed ? super.getShader() : null;
     }
 
@@ -138,6 +139,7 @@ public abstract class CoordinateSystem extends UIEntity {
         }
 
         return new DrawingBoard.DrawableEntity(
+                getShader(),
                 Shapes.circle(64),
                 dotMaterial != null ? dotMaterial : new ColorMaterial(Color.BLACK),
                 () -> fromCoordinateToScreenX(dot.x).getAsInt(),

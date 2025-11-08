@@ -1,7 +1,7 @@
 package dev.xernas.hydrogen.ecs;
 
 import dev.xernas.hydrogen.ecs.ui.behaviors.UIComponent;
-import dev.xernas.hydrogen.ecs.ui.elements.UIEntity;
+import dev.xernas.hydrogen.ecs.ui.entities.UIEntity;
 import dev.xernas.hydrogen.ecs.utils.Shapes;
 import dev.xernas.hydrogen.rendering.Mesh;
 import dev.xernas.hydrogen.rendering.material.ColorMaterial;
@@ -78,11 +78,21 @@ public class DrawingBoard {
     }
 
     public static UIEntity createLine(IntSupplier x1, IntSupplier y1, IntSupplier x2, IntSupplier y2, IntSupplier thickness, Material material) {
+        return createLine(null, x1, y1, x2, y2, thickness, material);
+    }
+
+    public static UIEntity createLine(String shader, IntSupplier x1, IntSupplier y1, IntSupplier x2, IntSupplier y2, IntSupplier thickness, Material material) {
         IntSupplier dx = () -> x1.getAsInt() - x2.getAsInt();
         IntSupplier dy = () -> y1.getAsInt() - y2.getAsInt();
         IntSupplier length = () -> (int) Math.sqrt(dx.getAsInt() * dx.getAsInt() + dy.getAsInt() * dy.getAsInt());
         IntSupplier thicknessMaxed = () -> Math.max(thickness.getAsInt(), 1);
         return new UIEntity() {
+
+            @Override
+            public String getShader() {
+                return shader != null ? shader : super.getShader();
+            }
+
             @Override
             public Material getMaterial() {
                 return material;
@@ -126,6 +136,10 @@ public class DrawingBoard {
     }
 
     public static UIEntity createLine(SceneEntity start, SceneEntity end, IntSupplier thickness, Material material) {
+        return createLine(null, start, end, thickness, material);
+    }
+
+    public static UIEntity createLine(String shader, SceneEntity start, SceneEntity end, IntSupplier thickness, Material material) {
         UIComponent startUI = Objects.requireNonNull(start.getBehavior(UIComponent.class));
         UIComponent endUI = Objects.requireNonNull(end.getBehavior(UIComponent.class));
         IntSupplier dx = () -> endUI.getX() - startUI.getX();
@@ -133,6 +147,12 @@ public class DrawingBoard {
         IntSupplier length = () -> (int) Math.sqrt(dx.getAsInt() * dx.getAsInt() + dy.getAsInt() * dy.getAsInt());
         IntSupplier thicknessMaxed = () -> Math.max(thickness.getAsInt(), 1);
         return new UIEntity() {
+
+            @Override
+            public String getShader() {
+                return shader != null ? shader : super.getShader();
+            }
+
             @Override
             public Material getMaterial() {
                 return material;

@@ -1,4 +1,4 @@
-package dev.xernas.hydrogen.ecs.ui.elements;
+package dev.xernas.hydrogen.ecs.ui.entities;
 
 import dev.xernas.hydrogen.ecs.Behavior;
 import dev.xernas.hydrogen.ecs.SceneEntity;
@@ -9,7 +9,6 @@ import dev.xernas.hydrogen.ecs.utils.Shapes;
 import dev.xernas.hydrogen.rendering.Mesh;
 import dev.xernas.photon.render.IMesh;
 import dev.xernas.photon.render.shader.Material;
-import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.function.IntSupplier;
@@ -17,22 +16,30 @@ import java.util.function.Supplier;
 
 public abstract class UIEntity extends SceneEntity  {
 
+    private final boolean useTransform;
+
     public UIEntity() {
-        this(null);
+        this((String) null);
     }
 
     public UIEntity(String name) {
         super(name, new Transform());
+        this.useTransform = false;
     }
 
-    public List<Behavior> getNewBehaviors() {
-        return List.of();
-    };
+    public UIEntity(Transform transform) {
+        this(null, transform);
+    }
+
+    public UIEntity(String name, Transform transform) {
+        super(name, transform);
+        this.useTransform = true;
+    }
 
     @Override
     public final Map<Class<? extends Behavior>, Behavior> getBehaviors() {
         Map<Class<? extends Behavior>, Behavior> map = super.getBehaviors();
-        map.putIfAbsent(UIComponent.class, new UIComponent(getX(), getY(), getWidth(), getHeight(), getRotation2D()));
+        map.putIfAbsent(UIComponent.class, new UIComponent(getX(), getY(), getWidth(), getHeight(), getRotation2D(), useTransform));
 
         String shader = getShader();
         if (shader != null) {
@@ -40,7 +47,6 @@ public abstract class UIEntity extends SceneEntity  {
             map.putIfAbsent(MeshRenderer.class, new MeshRenderer(mesh, shader));
         }
 
-        for (Behavior behavior : getNewBehaviors()) map.putIfAbsent(behavior.getClass(), behavior);
         return map;
     }
 

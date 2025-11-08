@@ -34,6 +34,14 @@ public class MatrixUtils {
         return viewMatrix;
     }
 
+    public static Matrix4f create2DViewMatrix(Transform.CameraTransform transform) {
+        Vector3f position = transform.getPosition();
+        Matrix4f viewMatrix = new Matrix4f();
+        viewMatrix.identity();
+        viewMatrix.translate(-position.x, -position.y, 0);
+        return viewMatrix;
+    }
+
     public static Matrix4f createProjectionMatrix(IWindow window) throws PhotonException {
         Camera camera = Hydrogen.getActiveCamera();
         return new Matrix4f().identity()

@@ -1,10 +1,7 @@
 package dev.xernas.hydrogen.ecs.utils;
 
 import dev.xernas.hydrogen.rendering.Mesh;
-import dev.xernas.hydrogen.resource.OBJLoader;
-import dev.xernas.hydrogen.resource.ResourceManager;
 import dev.xernas.photon.exceptions.PhotonException;
-import dev.xernas.photon.render.IMesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -205,9 +202,9 @@ public class Shapes {
 
         return meshBuilder;
     }
-
-    public static Mesh.Builder obj(Path path) throws PhotonException {
-        return OBJLoader.loadFromResources(path);
-    }
+//
+//    public static Mesh.Builder obj(Path path) throws PhotonException {
+//        return OBJLoader.loadFromResources(path);
+//    }
 
 }

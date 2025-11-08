@@ -21,7 +21,7 @@ public interface Behavior {
 
     };
 
-    default void input(IWindow window) {
+    default void input(IWindow window) throws PhotonException {
 
     }
 

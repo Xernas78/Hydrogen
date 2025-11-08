@@ -59,7 +59,7 @@ public class SceneEntity {
         for (Behavior behavior : getBehaviors().values()) behavior.fixedUpdate(dt);
     }
 
-    public final void inputBehaviors(IWindow window) {
+    public final void inputBehaviors(IWindow window) throws PhotonException {
         for (Behavior behavior : getBehaviors().values()) behavior.input(window);
     }
 

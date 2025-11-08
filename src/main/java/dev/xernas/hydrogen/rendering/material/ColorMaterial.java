@@ -9,6 +9,7 @@ import java.awt.*;
 public class ColorMaterial implements Material {
 
     private Color color;
+    private boolean illuminated = true;
 
     public ColorMaterial(Color color) {
         this.color = color;
@@ -26,11 +27,17 @@ public class ColorMaterial implements Material {
 
     @Override
     public boolean isIlluminated() {
-        return true;
+        return illuminated;
     }
 
-    public void setColor(Color color) {
+    public ColorMaterial setIlluminated(boolean illuminated) {
+        this.illuminated = illuminated;
+        return this;
+    }
+
+    public ColorMaterial setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     public static ColorMaterial randomColor() {
